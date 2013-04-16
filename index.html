@@ -18,10 +18,10 @@
         </table>
     </div>
     <div id="filter">
-        <form data-ng-submit="filter()">
+        <form>
             <ul>
-                <li><label>Faction: <select name="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
-                <li><label>Account Wide: <select name="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
+                <li><label>Faction: <select name="faction" data-ng-model="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
+                <li><label>Account Wide: <select name="accountwide" data-ng-model="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
                 <li>Hide achievements which... </li>
                 <li>... none has completed: <input type="checkbox" name="completion" value="none" /></li>
                 <li>... both have completed: <input type="checkbox" name="completion" value="both" checked /></li>
@@ -49,25 +49,23 @@
                 <th>{{rightContender.name}}: {{category.rightContenderProgress}}/{{category.total}}</th>
             </tr>
         </table>
-        <div>
-            <ul>
-                <li class="achievement" data-ng-repeat="achievement in category.achievements">
-                    <h3><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}} ({{achievement.points}})</a></h3>
-                    <table>
-                        <tr>
-                            <th>{{leftContender.name}}: {{achievementProgress(leftContender, achievement.id)}}</th>
-                            <th>{{rightContender.name}}: {{achievementProgress(rightContender, achievement.id)}}</th>
-                        </tr>
-                        <tr data-ng-repeat="criteria in achievement.criteria">
-                            <td>{{criteria.description}}: {{criteriaProgress(leftContender, criteria.id)}}/{{criteria.max}}</td>
-                            <td>{{criteria.description}}: {{criteriaProgress(rightContender, criteria.id)}}/{{criteria.max}}</td>
-                        </tr>
-                    </table>
-                </li>
-            </ul>
-        </div>
+        <ul data-ng-show="category.achievements">
+            <li class="achievement" data-ng-repeat="achievement in category.achievements" data-ng-class="{leftcompleted: achievementProgress(leftContender, achievement.id) != 'Incomplete', rightcompleted: achievementProgress(rightContender, achievement.id) != 'Incomplete'">
+                <h3><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a>({{achievement.points}})</h3>
+                <table>
+                    <tr>
+                        <th>{{leftContender.name}}: {{achievementProgress(leftContender, achievement.id)}}</th>
+                        <th>{{rightContender.name}}: {{achievementProgress(rightContender, achievement.id)}}</th>
+                    </tr>
+                    <tr data-ng-repeat="criteria in achievement.criteria">
+                        <td>{{criteria.description}}: {{criteriaProgress(leftContender, criteria.id)}}/{{criteria.max}}</td>
+                        <td>{{criteria.description}}: {{criteriaProgress(rightContender, criteria.id)}}/{{criteria.max}}</td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
     </div>
-    <script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script><script>var wowhead_tooltips = { "colorlinks": true, "iconizelinks": true, "renamelinks": true }</script>
+    <script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/angular.min.js"></script>
     <script src="app.js"></script>

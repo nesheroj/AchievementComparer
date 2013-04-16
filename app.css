@@ -15,6 +15,10 @@ a {
     text-decoration: none;
 }
 
+table {
+    width: 100%;
+}
+
 #navigation, #filter {
     position: fixed;
 }
@@ -29,8 +33,4 @@ a {
     bottom: 0px;
     left: 0px;
     overflow: auto;
-}
-
-#sections>div{
-    /*/display:none;*/
 }
