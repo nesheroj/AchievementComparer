@@ -19,7 +19,6 @@
     <Content Include="app.css" />
     <Content Include="Definitions\angular.d.ts" />
     <Content Include="Definitions\jquery.d.ts" />
-    <Content Include="Definitions\jqueryui.d.ts" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>

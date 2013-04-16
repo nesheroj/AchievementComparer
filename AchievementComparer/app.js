@@ -1,5 +1,4 @@
 /// <reference path='Definitions/jquery.d.ts' />
-/// <reference path='Definitions/jqueryui.d.ts' />
 /// <reference path='Definitions/angular.d.ts' />
 // Blizz's data structures
 var BattleNet;
