@@ -175,7 +175,7 @@ module AchievementComparer {
 
         achievementProgress = function (contender: BattleNet.Character, achievementId: number) {
             if (contender.achievements.achievementsCompleted.indexOf(achievementId) == -1)
-                return "incomplete";
+                return "Incomplete";
             return new Date(contender.achievements.achievementsCompletedTimestamp[contender.achievements.achievementsCompleted.indexOf(achievementId)] * 1000).toDateString();
         };
 
