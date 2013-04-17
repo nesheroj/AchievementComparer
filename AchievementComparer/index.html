@@ -48,16 +48,18 @@
         </div>
         <div id="category" data-ng-cloak="" data-ng-show="category">
             <table>
-                <tr class="summary">
-                    <th class="left" style="background-image: linear-gradient(to right, black 0%, black {{Math.round(category.leftContenderProgress*100/category.total)-5}}%, #55B301 {{Math.round(category.leftContenderProgress*100/category.total)+5}}%, #55B301 100%);">{{category.leftContenderProgress}}/{{category.total}} ({{Math.round(category.leftContenderProgress*100/category.total)}}%)</th>
-                    <th class="right" style="background-image: linear-gradient(to left, black 0%, black {{Math.round(category.rightContenderProgress*100/category.total)-5}}%, #55B301 {{Math.round(category.rightContenderProgress*100/category.total)+5}}%, #55B301 100%);">{{category.rightContenderProgress}}/{{category.total}} ({{Math.round(category.rightContenderProgress*100/category.total)}}%)</th>
+                <tr class="summary" data-ng-hide="category.total == 0">
+                    <th class="left" style="background-image: linear-gradient(to left, #55B301 0%, #55B301 {{Math.round(category.leftContenderProgress*100/category.total)}}%, #000000 {{Math.round(category.leftContenderProgress*100/category.total)+3}}%, #000000 100%);">{{category.leftContenderProgress}}/{{category.total}} ({{Math.round(category.leftContenderProgress*100/category.total)}}%)</th>
+                    <th class="right" style="background-image: linear-gradient(to right, #55B301 0%, #55B301 {{Math.round(category.rightContenderProgress*100/category.total)}}%, #000000 {{Math.round(category.rightContenderProgress*100/category.total)+3}}%, #000000 100%);">{{category.rightContenderProgress}}/{{category.total}} ({{Math.round(category.rightContenderProgress*100/category.total)}}%)</th>
                 </tr>
                 <tr class="achievement" data-ng-repeat="achievement in category.achievements" data-ng-class="{account: achievement.accountWide}">
                     <td colspan="2">
-                        <img data-ng-src="http://media.blizzard.com/wow/icons/56/{{achievement.icon}}.jpg" />
-                        <p class="points">{{achievement.points}}</p>
-                        <p class="title"><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a></p>
-                        <p class="desc">{{achievement.description}}</p>
+                        <div>
+                            <img data-ng-src="http://media.blizzard.com/wow/icons/56/{{achievement.icon}}.jpg" />
+                            <p class="points">{{achievement.points}}</p>
+                            <p class="title"><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a></p>
+                            <p class="desc">{{achievement.description}}</p>
+                        </div>
                         <table>
                             <tr>
                                 <th>{{achievementProgress(leftContender, achievement.id)}}</th>
