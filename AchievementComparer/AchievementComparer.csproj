@@ -16,8 +16,9 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="app.css" />
     <Content Include="Definitions\angular.d.ts" />
+    <Content Include="app.css" />
+    <TypeScriptCompile Include="Definitions\blizzard.d.ts" />
     <Content Include="Definitions\jquery.d.ts" />
     <Content Include="index.html" />
     <Content Include="app.js">

@@ -1,63 +1,6 @@
 /// <reference path='Definitions/jquery.d.ts' />
 /// <reference path='Definitions/angular.d.ts' />
-
-// Blizz's data structures
-module BattleNet {
-    'use strict';
-    export interface Character {
-        lastModified: number;
-        name: string;
-        realm: string;
-        battlegroup: string;
-        class: number;
-        race: number;
-        gender: number;
-        level: number;
-        achievementPoints: number;
-        thumbnail: string;
-        calcClass: string;
-        achievements: CharacterAchievements;
-    }
-
-    export interface CharacterAchievements {
-        achievementsCompleted: number[];
-        achievementsCompletedTimestamp: number[];
-        criteria: number[];
-        criteriaQuantity: number[];
-        criteriaTimestamp: number[];
-        criteriaCreated: number[];
-    }
-
-    export interface AchievementCategory {
-        achievements: Achievement[];
-        categories?: AchievementCategory[];
-        id: number;
-        name: string;
-    }
-
-    export interface Achievements {
-        achievements: AchievementCategory[];
-    }
-
-    export interface Achievement {
-        accountWide: bool;
-        criteria: AchievementCriteria[];
-        description: string;
-        factionId: number;
-        icon: string;
-        id: number;
-        points: number;
-        rewardItems: Object[];
-        title: string;
-    }
-
-    export interface AchievementCriteria {
-        description: String;
-        id: number;
-        max: number;
-        orderIndex: number;
-    }
-}
+/// <reference path='Definitions/blizzard.d.ts' />
 
 module AchievementComparer {
     'use strict';
@@ -70,6 +13,7 @@ module AchievementComparer {
 
     export interface IScope extends ng.IScope {
         location: ng.ILocationService;
+        title: string;
         categories: BattleNet.AchievementCategory[];
         category: Category;
         leftContender: BattleNet.Character;
@@ -77,9 +21,13 @@ module AchievementComparer {
 
         achievementProgress: (contender: BattleNet.Character, achievementId: number) => string;
         criteriaProgress: (contender: BattleNet.Character, criteriaId: number) => string;
+        classDesc: (classId: number) => string;
+        raceDesc: (raceId: number) => string;
     }
 
     export interface IStorage {
+        getRaces(forceReload?: bool): BattleNet.Races;
+        getClasses(forceReload?: bool): BattleNet.Classes;
         getAchievements(forceReload?: bool): BattleNet.Achievements;
         getCharacter(contender: string, forceReload?: bool): BattleNet.Character;
     }
@@ -90,6 +38,28 @@ module AchievementComparer {
             return [
                 Storage
             ]
+        }
+
+        getRaces(forceReload?: bool): BattleNet.Races {
+            if (forceReload || localStorage.getItem("races") === null) {
+                $.getJSON("http://eu.battle.net/api/wow/data/character/races?jsonp=?").done((json) => {
+                    localStorage.setItem("races", JSON.stringify(json));
+                    return JSON.parse(localStorage.getItem("races"));
+                });
+            } else {
+                return JSON.parse(localStorage.getItem("races"));
+            }
+        }
+
+        getClasses(forceReload?: bool): BattleNet.Classes {
+            if (forceReload || localStorage.getItem("classes") === null) {
+                $.getJSON("http://eu.battle.net/api/wow/data/character/classes?jsonp=?").done((json) => {
+                    localStorage.setItem("classes", JSON.stringify(json));
+                    return JSON.parse(localStorage.getItem("classes"));
+                });
+            } else {
+                return JSON.parse(localStorage.getItem("classes"));
+            }
         }
 
         getAchievements(forceReload?: bool): BattleNet.Achievements {
@@ -138,7 +108,8 @@ module AchievementComparer {
             $scope.$watch('location.path()', (path) => this.onPath(path));
 
             $scope.achievementProgress = (contender, achievementId) => this.achievementProgress(contender, achievementId);
-            $scope.criteriaProgress = (contender, criteriaId) => this.criteriaProgress(contender, criteriaId);
+            $scope.classDesc = (classId) => { return Storage.getClasses().classes.filter((currentClass) => { return currentClass.id == classId })[0].name };
+            $scope.raceDesc = (raceId) => { return Storage.getRaces().races.filter((currentRace) => { return currentRace.id == raceId })[0].name };
 
             if ($location.path() === '')
                 $location.path('/' + $scope.categories[0].name);
@@ -157,6 +128,7 @@ module AchievementComparer {
                     if (this.$scope.rightContender.achievements.achievementsCompleted.indexOf(achievement.id) >= 0)
                         rightContenderProgress += achievement.points;
                 });
+                this.$scope.title = category.name;
                 this.$scope.category = Object.create(category, { total: { value: total }, leftContenderProgress: { value: leftContenderProgress }, rightContenderProgress: { value: rightContenderProgress } });
             } else if (categoryPath.length == 3) {
                 var category = this.$scope.categories.filter((currentCategory) => { return currentCategory.name == categoryPath[1] }).pop();
@@ -169,17 +141,18 @@ module AchievementComparer {
                     if (this.$scope.rightContender.achievements.achievementsCompleted.indexOf(achievement.id) >= 0)
                         rightContenderProgress += achievement.points;
                 });
+                this.$scope.title = category.name + "->" + subcategory.name;
                 this.$scope.category = Object.create(subcategory, { total: { value: total }, leftContenderProgress: { value: leftContenderProgress }, rightContenderProgress: { value: rightContenderProgress } });
             }
         }
 
-        achievementProgress = function (contender: BattleNet.Character, achievementId: number) {
+        achievementProgress = (contender: BattleNet.Character, achievementId: number): string => {
             if (contender.achievements.achievementsCompleted.indexOf(achievementId) == -1)
                 return "Incomplete";
             return new Date(contender.achievements.achievementsCompletedTimestamp[contender.achievements.achievementsCompleted.indexOf(achievementId)] * 1000).toDateString();
         };
 
-        criteriaProgress = function (contender: BattleNet.Character, criteriaId: number) {
+        criteriaProgress = (contender: BattleNet.Character, criteriaId: number): string => {
             if (contender.achievements.criteria.indexOf(criteriaId) == -1)
                 return "0";
             return contender.achievements.criteriaQuantity[contender.achievements.criteria.indexOf(criteriaId)].toString();

@@ -1,10 +1,6 @@
 /// <reference path='Definitions/jquery.d.ts' />
 /// <reference path='Definitions/angular.d.ts' />
-// Blizz's data structures
-var BattleNet;
-(function (BattleNet) {
-    'use strict';
-})(BattleNet || (BattleNet = {}));
+/// <reference path='Definitions/blizzard.d.ts' />
 var AchievementComparer;
 (function (AchievementComparer) {
     'use strict';
@@ -14,6 +10,26 @@ var AchievementComparer;
             return [
                 Storage
             ];
+        };
+        Storage.prototype.getRaces = function (forceReload) {
+            if(forceReload || localStorage.getItem("races") === null) {
+                $.getJSON("http://eu.battle.net/api/wow/data/character/races?jsonp=?").done(function (json) {
+                    localStorage.setItem("races", JSON.stringify(json));
+                    return JSON.parse(localStorage.getItem("races"));
+                });
+            } else {
+                return JSON.parse(localStorage.getItem("races"));
+            }
+        };
+        Storage.prototype.getClasses = function (forceReload) {
+            if(forceReload || localStorage.getItem("classes") === null) {
+                $.getJSON("http://eu.battle.net/api/wow/data/character/classes?jsonp=?").done(function (json) {
+                    localStorage.setItem("classes", JSON.stringify(json));
+                    return JSON.parse(localStorage.getItem("classes"));
+                });
+            } else {
+                return JSON.parse(localStorage.getItem("classes"));
+            }
         };
         Storage.prototype.getAchievements = function (forceReload) {
             if(forceReload || localStorage.getItem("achievements") === null) {
@@ -66,8 +82,15 @@ var AchievementComparer;
             $scope.achievementProgress = function (contender, achievementId) {
                 return _this.achievementProgress(contender, achievementId);
             };
-            $scope.criteriaProgress = function (contender, criteriaId) {
-                return _this.criteriaProgress(contender, criteriaId);
+            $scope.classDesc = function (classId) {
+                return Storage.getClasses().classes.filter(function (currentClass) {
+                    return currentClass.id == classId;
+                })[0].name;
+            };
+            $scope.raceDesc = function (raceId) {
+                return Storage.getRaces().races.filter(function (currentRace) {
+                    return currentRace.id == raceId;
+                })[0].name;
             };
             if($location.path() === '') {
                 $location.path('/' + $scope.categories[0].name);
@@ -100,6 +123,7 @@ var AchievementComparer;
                         rightContenderProgress += achievement.points;
                     }
                 });
+                this.$scope.title = category.name;
                 this.$scope.category = Object.create(category, {
                     total: {
                         value: total
@@ -128,6 +152,7 @@ var AchievementComparer;
                         rightContenderProgress += achievement.points;
                     }
                 });
+                this.$scope.title = category.name + "->" + subcategory.name;
                 this.$scope.category = Object.create(subcategory, {
                     total: {
                         value: total
