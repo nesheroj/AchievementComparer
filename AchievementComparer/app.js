@@ -43,7 +43,7 @@ var AchievementComparer;
         };
         Storage.prototype.getCharacter = function (contender, forceReload) {
             if(forceReload || localStorage.getItem(contender) === null) {
-                $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements&jsonp=?").done(function (json) {
+                $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements,guild&jsonp=?").done(function (json) {
                     localStorage.setItem(contender, JSON.stringify(json));
                     return JSON.parse(localStorage.getItem(contender));
                 });
@@ -73,6 +73,7 @@ var AchievementComparer;
                 }
                 return contender.achievements.criteriaQuantity[contender.achievements.criteria.indexOf(criteriaId)].toString();
             };
+            $scope.Math = Math;
             $scope.categories = Storage.getAchievements().achievements;
             $scope.leftContender = Storage.getCharacter("Sanguino/Salka");
             $scope.rightContender = Storage.getCharacter("Sanguino/Cavir");
@@ -165,6 +166,9 @@ var AchievementComparer;
                     }
                 });
             }
+            $("html, body").animate({
+                scrollTop: 0
+            }, "slow");
         };
         return Controller;
     })();

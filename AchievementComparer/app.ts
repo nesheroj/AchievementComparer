@@ -12,6 +12,8 @@ module AchievementComparer {
     }
 
     export interface IScope extends ng.IScope {
+        Math: Math;
+
         location: ng.ILocationService;
         title: string;
         categories: BattleNet.AchievementCategory[];
@@ -75,7 +77,7 @@ module AchievementComparer {
 
         getCharacter(contender: string, forceReload?: bool): BattleNet.Character {
             if (forceReload || localStorage.getItem(contender) === null) {
-                $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements&jsonp=?").done((json) => {
+                $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements,guild&jsonp=?").done((json) => {
                     localStorage.setItem(contender, JSON.stringify(json));
                     return JSON.parse(localStorage.getItem(contender));
                 });
@@ -102,6 +104,8 @@ module AchievementComparer {
            private Storage: IStorage,
            private filterFilter
            ) {
+            $scope.Math = Math;
+
             $scope.categories = Storage.getAchievements().achievements;
             $scope.leftContender = Storage.getCharacter("Sanguino/Salka");
             $scope.rightContender = Storage.getCharacter("Sanguino/Cavir");
@@ -144,6 +148,7 @@ module AchievementComparer {
                 this.$scope.title = category.name + "->" + subcategory.name;
                 this.$scope.category = Object.create(subcategory, { total: { value: total }, leftContenderProgress: { value: leftContenderProgress }, rightContenderProgress: { value: rightContenderProgress } });
             }
+            $("html, body").animate({ scrollTop: 0 }, "slow");
         }
 
         achievementProgress = (contender: BattleNet.Character, achievementId: number): string => {
