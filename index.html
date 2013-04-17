@@ -3,32 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>AchievementComparer</title>
+    <title>AchievementComparer {{title}}</title>
     <link rel="stylesheet" href="app.css">
     <style>[data-ng-cloak] {display: none}</style>
 </head>
 <body data-ng-controller="AchievementComparer.Controller">
-        <div id="header">
-        <table>
-            <tr class="contenders" data-ng-cloak="">
-                <th class="left">{{leftContender.name}}@{{leftContender.realm}} ({{leftContender.achievementPoints}})</th>
-                <th>VS</th>
-                <th class="right">{{rightContender.name}}@{{rightContender.realm}} ({{rightContender.achievementPoints}})</th>
-            </tr>
-        </table>
-    </div>
-    <div id="filter">
-        <form>
-            <ul>
-                <li><label>Faction: <select name="faction" data-ng-model="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
-                <li><label>Account Wide: <select name="accountwide" data-ng-model="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
-                <li>Hide achievements which... </li>
-                <li>... none has completed: <input type="checkbox" name="completion" value="none" /></li>
-                <li>... both have completed: <input type="checkbox" name="completion" value="both" checked /></li>
-                <li><input type="submit" value="update" /></li>
-            </ul>
-        </form>
-    </div>
     <div id="navigation">
         <ul data-ng-cloak="">
             <li data-ng-repeat="category in categories">
@@ -41,29 +20,59 @@
             </li>
         </ul>
     </div>
-    <div id="category" data-ng-cloak="" data-ng-show="category">
-        <h3>{{category.name}}</h3>
-        <table>
-            <tr>
-                <th>{{leftContender.name}}: {{category.leftContenderProgress}}/{{category.total}}</th>
-                <th>{{rightContender.name}}: {{category.rightContenderProgress}}/{{category.total}}</th>
-            </tr>
-        </table>
-        <ul data-ng-show="category.achievements">
-            <li class="achievement" data-ng-repeat="achievement in category.achievements" data-ng-class="{leftcompleted: achievementProgress(leftContender, achievement.id) != 'Incomplete', rightcompleted: achievementProgress(rightContender, achievement.id) != 'Incomplete'">
-                <h3><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a>({{achievement.points}})</h3>
-                <table>
-                    <tr>
-                        <th>{{leftContender.name}}: {{achievementProgress(leftContender, achievement.id)}}</th>
-                        <th>{{rightContender.name}}: {{achievementProgress(rightContender, achievement.id)}}</th>
-                    </tr>
-                    <tr data-ng-repeat="criteria in achievement.criteria">
-                        <td>{{criteria.description}}: {{criteriaProgress(leftContender, criteria.id)}}/{{criteria.max}}</td>
-                        <td>{{criteria.description}}: {{criteriaProgress(rightContender, criteria.id)}}/{{criteria.max}}</td>
-                    </tr>
-                </table>
-            </li>
-        </ul>
+    <div id="filter">
+        <form>
+            <ul>
+                <li><label>Faction: <select name="faction" data-ng-model="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
+                <li><label>Account Wide: <select name="accountwide" data-ng-model="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
+                <li>Hide achievements which... </li>
+                <li>... none has completed: <input type="checkbox" name="completion" value="none" /></li>
+                <li>... both have completed: <input type="checkbox" name="completion" value="both" checked /></li>
+            </ul>
+        </form>
+    </div>
+     <div id="content">
+        <div id="leftcontender">
+            <img data-ng-src="http://eu.battle.net/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" />
+            <p class="title">{{leftContender.name}}@{{leftContender.realm}}</p>
+            <p class="desc">L{{leftContender.level}}&nbsp;<span data-ng-class="{raceDesc(leftContender.class).toLower()}">{{raceDesc(leftContender.race)}}</span>&nbsp;<span data-ng-class="{classDesc(leftContender.class).toLower()}">{{classDesc(leftContender.class)}}</span></p>
+            <p class="points">{{rightContender.achievementPoints}}</p>
+        </div>
+        <div id="rightcontender">
+            <img data-ng-src="http://eu.battle.net/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" />
+            <p class="title">{{rightContender.name}}@{{rightContender.realm}}</p>
+            <p class="desc class{{rightContender.class}}">L{{rightContender.level}}&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}</p>
+            <p class="points">{{rightContender.achievementPoints}}</p>
+        </div>
+        <div id="category" data-ng-cloak="" data-ng-show="category">
+            <table>
+                <tr class="summary">
+                    <th>{{category.leftContenderProgress}}/{{category.total}}</th>
+                    <th>{{category.name}}</th>
+                    <th>{{category.rightContenderProgress}}/{{category.total}}</th>
+                </tr>
+                <tr class="achievement" data-ng-repeat="achievement in category.achievements">
+                    <td colspan="3">
+                        <img data-ng-src="http://media.blizzard.com/wow/icons/56/{{achievement.icon}}.jpg" />
+                        <p class="points">{{achievement.points}}</p>
+                        <p class="title"><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a></p>
+                        <p class="desc">{{achievement.description}}</p>
+                        <table>
+                            <tr>
+                                <th>{{achievementProgress(leftContender, achievement.id)}}</th>
+                                <th>Completed</th>
+                                <th>{{achievementProgress(rightContender, achievement.id)}}</th>
+                            </tr>
+                            <tr data-ng-repeat="criteria in achievement.criteria">
+                                <td>{{criteriaProgress(leftContender, criteria.id)}}/{{criteria.max}}</td>
+                                <th>{{criteria.description}}</th>
+                                <td>{{criteriaProgress(rightContender, criteria.id)}}/{{criteria.max}}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
     <script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
