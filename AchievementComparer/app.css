@@ -13,6 +13,40 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 .color-c10 { color: #00ffba } /* monk */
 .color-c11 { color: #ff7c0a } /* druid */
 
+.icon-bounce {
+  display: inline-block;
+  -moz-animation: bounce 1s infinite linear;
+  -o-animation: bounce 1s infinite linear;
+  -webkit-animation: bounce 1s infinite linear;
+  animation: bounce 1s infinite linear;
+}
+
+@-moz-keyframes bounce {
+  0% { -moz-transform: scale(1,1); }
+  50% { -moz-transform: scale(1.5,1.5); }
+  100% { -moz-transform: scale(1,1); }
+}
+@-webkit-keyframes bounce {
+  0% { -webkit-transform: scale(1,1); }
+  50% { -webkit-transform: scale(1.5,1.5); }
+  100% { -webkit-transform: scale(1,1); }
+}
+@-o-keyframes bounce {
+  0% { -o-transform: scale(1,1); }
+  50% { -o-transform: scale(1.5,1.5); }
+  100% { -o-transform: scale(1,1); }
+}
+@-ms-keyframes bounce {
+  0% { -ms-transform: scale(1,1); }
+  50% { -ms-transform: scale(1.5,1.5); }
+  100% { -ms-transform: scale(1,1); }
+}
+@keyframes bounce {
+  0% { transform: scale(1,1); }
+  50% { transform: scale(1.5,1.5); }
+  100% { transform: scale(1,1); }
+}
+
 body {
     color: white;
     font-family: Tahoma;
@@ -21,6 +55,19 @@ body {
     background-color: black;
     margin: 50px 0 0 200px;
     text-align: center;
+}
+
+footer {
+    position: fixed;
+    bottom: 10px;
+    left: 8px;
+    text-align: left;
+    width: 300px;
+}
+
+footer > p {
+    color: #00ffba;
+    font-size: 12px;
 }
 
 a {
@@ -49,7 +96,7 @@ strong {
     background-color: black;
     top: 0px;
     right: 0px;
-    left: 150px;
+    left: 0px;
     height: 30px;
 }
 
@@ -59,7 +106,7 @@ strong {
 }
 
 #navigation {
-	top: 0px;
+	top: 30px;
     bottom: 0px;
     left: 0px;
     width: 150px;
@@ -79,11 +126,35 @@ strong {
 #leftcontender {
     float: left;
     width: 150px;
+    position: relative;
 }
 
 #rightcontender {
     float: right;
     width: 150px;
+    position: relative;
+}
+
+#leftcontender p.reload {
+    position: absolute;
+    top: 16px;  right: 10px;
+}
+
+#leftcontender p.select {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+}
+
+#rightcontender p.reload {
+    position: absolute;
+    top: 16px;  left: 10px;
+}
+
+#rightcontender p.select {
+    position: absolute;
+    top: 0px;  
+    left: 10px;
 }
 
 #rightcontender img.avatar {

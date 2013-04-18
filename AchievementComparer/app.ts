@@ -11,18 +11,25 @@ module AchievementComparer {
         rightContenderProgress: number;
     }
 
+    export interface Contender extends BattleNet.Character {
+        isReloading: bool;
+    }
+
     export interface IScope extends ng.IScope {
         Math: Math;
 
         location: ng.ILocationService;
-        title: string;
+
+        region: string;
         categories: BattleNet.AchievementCategory[];
         category: Category;
-        leftContender: BattleNet.Character;
-        rightContender: BattleNet.Character;
+        leftContender: Contender;
+        reloadLeftContender: () => void;
+        rightContender: Contender;
+        reloadRightContender: () => void;
 
-        achievementProgress: (contender: BattleNet.Character, achievementId: number) => string;
-        criteriaProgress: (contender: BattleNet.Character, criteriaId: number) => string;
+        achievementProgress: (contender: Contender, achievementId: number) => string;
+        criteriaProgress: (contender: Contender, criteriaId: number) => string;
         classDesc: (classId: number) => string;
         raceDesc: (raceId: number) => string;
     }
@@ -31,7 +38,7 @@ module AchievementComparer {
         getRaces(forceReload?: bool): BattleNet.Races;
         getClasses(forceReload?: bool): BattleNet.Classes;
         getAchievements(forceReload?: bool): BattleNet.Achievements;
-        getCharacter(contender: string, forceReload?: bool): BattleNet.Character;
+        getCharacter(contender: string, forceReload?: bool): Contender;
     }
 
     export class Storage implements IStorage {
@@ -64,6 +71,17 @@ module AchievementComparer {
             }
         }
 
+        getRealms(forceReload?: bool): BattleNet.Realms {
+            if (forceReload || localStorage.getItem("realms") === null) {
+                $.getJSON("http://eu.battle.net/api/wow/realm/status?jsonp=?").done((json) => {
+                    localStorage.setItem("realms", JSON.stringify(json));
+                    return JSON.parse(localStorage.getItem("realms"));
+                });
+            } else {
+                return JSON.parse(localStorage.getItem("realms"));
+            }
+        }
+
         getAchievements(forceReload?: bool): BattleNet.Achievements {
             if (forceReload || localStorage.getItem("achievements") === null) {
                 $.getJSON("http://eu.battle.net/api/wow/data/character/achievements?jsonp=?").done((json) => {
@@ -75,14 +93,14 @@ module AchievementComparer {
             }
         }
 
-        getCharacter(contender: string, forceReload?: bool): BattleNet.Character {
+        getCharacter(contender: string, forceReload?: bool): Contender {
             if (forceReload || localStorage.getItem(contender) === null) {
                 $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements,guild&jsonp=?").done((json) => {
                     localStorage.setItem(contender, JSON.stringify(json));
-                    return JSON.parse(localStorage.getItem(contender));
+                    return Object.create(JSON.parse(localStorage.getItem(contender)), { isReloading: { value: false, writable: true, enumerable: true } });
                 });
             } else {
-                return JSON.parse(localStorage.getItem(contender));
+                return Object.create(JSON.parse(localStorage.getItem(contender)), { isReloading: { value: false, writable: true, enumerable: true } });
             }
         }
     }
@@ -106,24 +124,26 @@ module AchievementComparer {
            ) {
             $scope.Math = Math;
 
+            $scope.region = "EU";
             $scope.categories = Storage.getAchievements().achievements;
             $scope.leftContender = Storage.getCharacter("Sanguino/Salka");
+            $scope.reloadLeftContender = () => { $scope.rightContender.isReloading = false; $scope.leftContender = Storage.getCharacter($scope.leftContender.realm + "/" + $scope.leftContender.name, true);  };
             $scope.rightContender = Storage.getCharacter("Sanguino/Cavir");
+            $scope.reloadRightContender = () => { $scope.rightContender.isReloading = true; $scope.rightContender = Storage.getCharacter($scope.rightContender.realm + "/" + $scope.rightContender.name, true); };
             $scope.$watch('location.path()', (path) => this.onPath(path));
 
             $scope.achievementProgress = (contender, achievementId) => this.achievementProgress(contender, achievementId);
             $scope.classDesc = (classId) => { return Storage.getClasses().classes.filter((currentClass) => { return currentClass.id == classId })[0].name };
             $scope.raceDesc = (raceId) => { return Storage.getRaces().races.filter((currentRace) => { return currentRace.id == raceId })[0].name };
-
-            if ($location.path() === '')
-                $location.path('/' + $scope.categories[0].name);
+  
             $scope.location = $location;
         }
 
         onPath(path: string) {
+            if (path === "") path = "/" + this.$scope.categories[0].name;
             var categoryPath = path.split("/");
             if (categoryPath.length == 2) {
-                var category = this.$scope.categories.filter((category) => { return category.name == categoryPath[1] }).pop();
+                var category = this.$scope.categories.filter((category) => { return category.name == categoryPath[1] })[0];
                 var total = 0, leftContenderProgress = 0, rightContenderProgress = 0;
                 category.achievements.forEach((achievement) => {
                     total += achievement.points;
@@ -132,11 +152,10 @@ module AchievementComparer {
                     if (this.$scope.rightContender.achievements.achievementsCompleted.indexOf(achievement.id) >= 0)
                         rightContenderProgress += achievement.points;
                 });
-                this.$scope.title = category.name;
                 this.$scope.category = Object.create(category, { total: { value: total }, leftContenderProgress: { value: leftContenderProgress }, rightContenderProgress: { value: rightContenderProgress } });
             } else if (categoryPath.length == 3) {
-                var category = this.$scope.categories.filter((currentCategory) => { return currentCategory.name == categoryPath[1] }).pop();
-                var subcategory = category.categories.filter((currentSubcategory) => { return currentSubcategory.name == categoryPath[2] }).pop();
+                var category = this.$scope.categories.filter((currentCategory) => { return currentCategory.name == categoryPath[1] })[0];
+                var subcategory = category.categories.filter((currentSubcategory) => { return currentSubcategory.name == categoryPath[2] })[0];
                 var total = 0, leftContenderProgress = 0, rightContenderProgress = 0;
                 subcategory.achievements.forEach((achievement) => {
                     total += achievement.points;
@@ -145,7 +164,6 @@ module AchievementComparer {
                     if (this.$scope.rightContender.achievements.achievementsCompleted.indexOf(achievement.id) >= 0)
                         rightContenderProgress += achievement.points;
                 });
-                this.$scope.title = category.name + "->" + subcategory.name;
                 this.$scope.category = Object.create(subcategory, { total: { value: total }, leftContenderProgress: { value: leftContenderProgress }, rightContenderProgress: { value: rightContenderProgress } });
             }
             $("html, body").animate({ scrollTop: 0 }, "slow");

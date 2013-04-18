@@ -26,9 +26,9 @@ module BattleNet {
     }
 
     interface AchievementCategory {
+        id: number;
         achievements: Achievement[];
         categories?: AchievementCategory[];
-        id: number;
         name: string;
     }
 
@@ -37,12 +37,12 @@ module BattleNet {
     }
 
     interface Achievement {
+        id: number;
         accountWide: bool;
         criteria: AchievementCriteria[];
         description: string;
         factionId: number;
         icon: string;
-        id: number;
         points: number;
         rewardItems: Object[];
         title: string;
@@ -93,5 +93,23 @@ module BattleNet {
         mask: number;
         side: string;
         name: string;
+    }
+
+    interface Realms {
+        realms: RealmStatus[];
+    }
+
+    interface RealmStatus {
+        battlegroup: string;
+        locale: string;
+        [name: string];
+        population: string;
+        queue: bool;
+        slug: string;
+        status: bool;
+        timezone: string;
+        //"tol-barad": TolBaradInfo;
+        type: string;
+        //wintergrasp: WintergraspInfo;
     }
 }
