@@ -102,7 +102,7 @@ module BattleNet {
     interface RealmStatus {
         battlegroup: string;
         locale: string;
-        [name: string];
+        name: string;
         population: string;
         queue: bool;
         slug: string;

@@ -16,15 +16,21 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="css\font-awesome.min.css" />
     <Content Include="Definitions\angular.d.ts" />
     <Content Include="app.css" />
     <TypeScriptCompile Include="Definitions\blizzard.d.ts" />
     <Content Include="Definitions\jquery.d.ts" />
+    <Content Include="font\fontawesome-webfont.svg" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>
     </Content>
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="font\fontawesome-webfont.eot" />
+    <Content Include="font\fontawesome-webfont.ttf" />
+    <Content Include="font\fontawesome-webfont.woff" />
+    <Content Include="font\FontAwesome.otf" />
     <None Include="github-casa.pubxml" />
     <None Include="github.pubxml" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />

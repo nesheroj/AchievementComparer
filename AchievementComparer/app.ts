@@ -15,12 +15,27 @@ module AchievementComparer {
         isReloading: bool;
     }
 
+    export interface Region {
+        code: string;
+        desc: string;
+        host: string;
+        locales: string[];
+    }
+
+    export interface DataCollection {
+        locale: string;
+        achievements: BattleNet.AchievementCategory[];
+        classes: BattleNet.CharacterClass[];
+        races: BattleNet.CharacterRace[];
+        realms: BattleNet.RealmStatus[];
+    }
+
     export interface IScope extends ng.IScope {
         Math: Math;
 
         location: ng.ILocationService;
 
-        region: string;
+        region: () => Region;
         categories: BattleNet.AchievementCategory[];
         category: Category;
         leftContender: Contender;
@@ -35,9 +50,13 @@ module AchievementComparer {
     }
 
     export interface IStorage {
-        getRaces(forceReload?: bool): BattleNet.Races;
-        getClasses(forceReload?: bool): BattleNet.Classes;
-        getAchievements(forceReload?: bool): BattleNet.Achievements;
+        currentRegion: Region;
+        currentLocale: string;
+        regions: Region[];
+        data: DataCollection;
+        lastLeftContender: string;
+        lastRightContender: string;
+
         getCharacter(contender: string, forceReload?: bool): Contender;
     }
 
@@ -49,53 +68,71 @@ module AchievementComparer {
             ]
         }
 
-        getRaces(forceReload?: bool): BattleNet.Races {
-            if (forceReload || localStorage.getItem("races") === null) {
-                $.getJSON("http://eu.battle.net/api/wow/data/character/races?jsonp=?").done((json) => {
-                    localStorage.setItem("races", JSON.stringify(json));
-                    return JSON.parse(localStorage.getItem("races"));
-                });
-            } else {
-                return JSON.parse(localStorage.getItem("races"));
-            }
+        currentRegion: Region;
+        currentLocale: string;
+        lastLeftContender: string;
+        lastRightContender: string;
+
+        data: DataCollection;
+        regions: Region[];
+
+        constructor() {
+
+            this.regions = [
+                { code: "US", desc: "Americas", host: "http://us.battle.net", locales: ["en_US", "es_MX", "pt_BR"] },
+                { code: "EU", desc: "Europe", host: "http://eu.battle.net", locales: ["en_GB", "es_ES", "fr_FR", "ru_RU", "de_DE", "pt_PT", "it_IT"] },
+                { code: "KR", desc: "Korea", host: "http://kr.battle.net", locales: ["ko_KR"] },
+                { code: "TW", desc: "Taiwan", host: "http://tw.battle.net", locales: ["zh_TW"] },
+                { code: "CN", desc: "China", host: "http://www.battlenet.com.cn", locales: ["zh_CN"] }];
+
+            this.currentRegion = this.regions.filter((region) => { return region.code == localStorage.getItem("region"); })[0] || this.regions[0];
+            this.setLocale(localStorage.getItem("locale") || this.currentRegion.locales[0]);
+            this.lastLeftContender = localStorage.getItem("leftContender");
+            this.lastRightContender = localStorage.getItem("rightContender");
         }
 
-        getClasses(forceReload?: bool): BattleNet.Classes {
-            if (forceReload || localStorage.getItem("classes") === null) {
-                $.getJSON("http://eu.battle.net/api/wow/data/character/classes?jsonp=?").done((json) => {
-                    localStorage.setItem("classes", JSON.stringify(json));
-                    return JSON.parse(localStorage.getItem("classes"));
-                });
-            } else {
-                return JSON.parse(localStorage.getItem("classes"));
-            }
-        }
+        setLocale(locale: string): void {
+            this.currentLocale = locale;
+            this.data = JSON.parse(localStorage.getItem("data"));
+            if (this.data === null || this.data.locale != locale) {
+                var achievements: BattleNet.AchievementCategory[];
+                var classes: BattleNet.CharacterClass[];
+                var races: BattleNet.CharacterRace[];
+                var realms: BattleNet.RealmStatus[];
 
-        getRealms(forceReload?: bool): BattleNet.Realms {
-            if (forceReload || localStorage.getItem("realms") === null) {
-                $.getJSON("http://eu.battle.net/api/wow/realm/status?jsonp=?").done((json) => {
-                    localStorage.setItem("realms", JSON.stringify(json));
-                    return JSON.parse(localStorage.getItem("realms"));
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/achievements?locale=" + locale + "&jsonp=?").done((json: BattleNet.Achievements) => {
+                    achievements = json.achievements;
+                    if ([achievements, classes, races, realms].every((current) => { return current != null })) {
+                        localStorage.setItem("data", JSON.stringify(this.data = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
+                    }
                 });
-            } else {
-                return JSON.parse(localStorage.getItem("realms"));
-            }
-        }
 
-        getAchievements(forceReload?: bool): BattleNet.Achievements {
-            if (forceReload || localStorage.getItem("achievements") === null) {
-                $.getJSON("http://eu.battle.net/api/wow/data/character/achievements?jsonp=?").done((json) => {
-                    localStorage.setItem("achievements", JSON.stringify(json));
-                    return JSON.parse(localStorage.getItem("achievements"));
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/classes?locale=" + locale + "&jsonp=?").done((json: BattleNet.Classes) => {
+                    classes = json.classes;
+                    if ([achievements, classes, races, realms].every((current) => { return current != null })) {
+                        localStorage.setItem("data" + locale, JSON.stringify(this.data = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
+                    }
                 });
-            } else {
-                return JSON.parse(localStorage.getItem("achievements"));
+
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/races?locale=" + locale + "&jsonp=?").done((json: BattleNet.Races) => {
+                    races = json.races;
+                    if ([achievements, classes, races, realms].every((current) => { return current != null })) {
+                        localStorage.setItem("data", JSON.stringify(this.data = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
+                    }
+                });
+
+                $.getJSON(this.currentRegion.host + "/api/wow/realm/status?locale=" + locale + "&jsonp=?").done((json: BattleNet.Realms) => {
+                    realms = json.realms;
+                    if ([achievements, classes, races, realms].every((current) => { return current != null })) {
+                        localStorage.setItem("data", JSON.stringify(this.data = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
+                    }
+                });
             }
         }
 
         getCharacter(contender: string, forceReload?: bool): Contender {
             if (forceReload || localStorage.getItem(contender) === null) {
-                $.getJSON("http://eu.battle.net/api/wow/character/" + contender + "?fields=achievements,guild&jsonp=?").done((json) => {
+                $.getJSON(this.currentRegion.host + "/api/wow/character/" + contender + "?locale=" + this.currentLocale + "&fields=achievements,guild&jsonp=?").done((json) => {
                     localStorage.setItem(contender, JSON.stringify(json));
                     return Object.create(JSON.parse(localStorage.getItem(contender)), { isReloading: { value: false, writable: true, enumerable: true } });
                 });
@@ -124,17 +161,20 @@ module AchievementComparer {
            ) {
             $scope.Math = Math;
 
-            $scope.region = "EU";
-            $scope.categories = Storage.getAchievements().achievements;
-            $scope.leftContender = Storage.getCharacter("Sanguino/Salka");
-            $scope.reloadLeftContender = () => { $scope.rightContender.isReloading = false; $scope.leftContender = Storage.getCharacter($scope.leftContender.realm + "/" + $scope.leftContender.name, true);  };
-            $scope.rightContender = Storage.getCharacter("Sanguino/Cavir");
-            $scope.reloadRightContender = () => { $scope.rightContender.isReloading = true; $scope.rightContender = Storage.getCharacter($scope.rightContender.realm + "/" + $scope.rightContender.name, true); };
+            $scope.categories = Storage.data.achievements;
+            if (Storage.lastLeftContender)
+                $scope.leftContender = Storage.getCharacter(Storage.lastLeftContender);
+            if (Storage.lastRightContender)
+                $scope.rightContender = Storage.getCharacter(Storage.lastRightContender);
+
             $scope.$watch('location.path()', (path) => this.onPath(path));
 
+            $scope.reloadLeftContender = () => { $scope.leftContender.isReloading = true; $scope.leftContender = Storage.getCharacter($scope.leftContender.realm + "/" + $scope.leftContender.name, true); };
+            $scope.reloadRightContender = () => { $scope.rightContender.isReloading = true; $scope.rightContender = Storage.getCharacter($scope.rightContender.realm + "/" + $scope.rightContender.name, true); };
+            $scope.region = () => { return Storage.currentRegion; };
             $scope.achievementProgress = (contender, achievementId) => this.achievementProgress(contender, achievementId);
-            $scope.classDesc = (classId) => { return Storage.getClasses().classes.filter((currentClass) => { return currentClass.id == classId })[0].name };
-            $scope.raceDesc = (raceId) => { return Storage.getRaces().races.filter((currentRace) => { return currentRace.id == raceId })[0].name };
+            $scope.classDesc = (classId) => { return Storage.data.classes.filter((currentClass) => { return currentClass.id == classId })[0].name };
+            $scope.raceDesc = (raceId) => { return Storage.data.races.filter((currentRace) => { return currentRace.id == raceId })[0].name };
   
             $scope.location = $location;
         }

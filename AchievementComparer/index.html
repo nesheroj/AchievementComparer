@@ -34,10 +34,10 @@
     </div>
      <div id="content">
         <div id="leftcontender" data-ng-cloak="">
-            <img data-ng-src="http://eu.battle.net/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
+            <img data-ng-src="http:/{{region().host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
             <p class="select"><a data-ng-click="selectRightContender()" title="select another character"><i class="icon-download-alt icon-bounce"></i></a></p>
             <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh icon-spin"></i></a></p>
-            <p class="title"><a data-ng-href="http://eu.battle.net/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}-{{region}}</a></p>
+            <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}-{{region}}</a></p>
             <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}-{{region}}</p>
             <p class="guild">{{leftContender.guild.name}}</p>
             <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
@@ -45,8 +45,8 @@
         <div id="rightcontender" data-ng-cloak="">
             <p class="select"><a data-ng-click="selectRightContender()" title="select another character"><i class="icon-download-alt icon-bounce"></i></a></p>
             <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh icon-spin"></i></a></p>
-            <img data-ng-src="http://eu.battle.net/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
-            <p class="title"><a data-ng-href="http://eu.battle.net/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
+            <img data-ng-src="http://{{region().host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
+            <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
             <p class="desc color-c{{rightContender.class}}">L<strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}-{{region}}</p>
             <p class="guild">{{rightContender.guild.name}}</p>
             <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
