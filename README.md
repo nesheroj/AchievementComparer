@@ -32,7 +32,7 @@ Never. I do this just for fun (Really, developing is lots of fun, you should try
 Because IE<10 and old browsers are insecure, give me cancer and make my battle pets cry. Remember I do this for fun.
 
 * Why haven't you added the possibility to do XYZ?
-Probably because you are reading this and not creating a feature request [https://github.com/nesukun/AchievementComparer/issues/new](here).
+Probably because you are reading this and not creating a feature request <a href="https://github.com/nesukun/AchievementComparer/issues/new">here</a>.
 
 * Why the app is ugly as hell?
 Because that's subjective and I have the artistic sensibility of a drunk walrus.
