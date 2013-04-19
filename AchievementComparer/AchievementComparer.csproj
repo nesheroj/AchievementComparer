@@ -22,14 +22,9 @@
     <Content Include="app.css">
       <DependentUpon>app.less</DependentUpon>
     </Content>
-    <Content Include="web.config" />
+    <Content Include="Definitions\common.less" />
+    <Content Include="Definitions\reset.less" />
     <Content Include="packages.config" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
     <TypeScriptCompile Include="Definitions\blizzard.d.ts" />
     <Content Include="Definitions\jquery.d.ts" />
     <Content Include="font\fontawesome-webfont.svg" />
@@ -42,7 +37,6 @@
     <Content Include="font\fontawesome-webfont.ttf" />
     <Content Include="font\fontawesome-webfont.woff" />
     <Content Include="font\FontAwesome.otf" />
-    <None Include="github-casa.pubxml" />
     <None Include="github.pubxml" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
@@ -97,6 +91,6 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)packages\dotless.1.3.1.0\tool\dotless.compiler.exe" -m  "$(ProjectDir)app.less" "$(ProjectDir)app.css"</PreBuildEvent>
+    <PreBuildEvent>"$(SolutionDir)packages\dotless.1.3.1.0\tool\dotless.compiler.exe" -m "$(ProjectDir)app.less" "$(ProjectDir)app.css"</PreBuildEvent>
   </PropertyGroup>
 </Project>

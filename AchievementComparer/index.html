@@ -43,7 +43,7 @@
             </div>
             <div data-ng-show="leftContender">
                 <img data-ng-src="{{region().host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
-                <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="select"><a data-ng-click="selectLeftContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
                 <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
                 <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}</a></p>
                 <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}</p>
