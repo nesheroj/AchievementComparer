@@ -25,20 +25,20 @@ This is a hobby project I'm working to cover for the loss an old feature of the 
 
 ## FAQ
 
-* Will you ever charge or display ads?
+### Will you ever charge or display ads?
 Never. I do this just for fun (Really, developing is lots of fun, you should try someday).
 
-* Why can't I use this in older browsers?
+### Why can't I use this in older browsers?
 Because IE<10 and old browsers are insecure, give me cancer and make my battle pets cry. Remember I do this for fun.
 
-* Why haven't you added the possibility to do XYZ?
+### Why haven't you added the possibility to do XYZ?
 Probably because you are reading this and not creating a feature request <a href="https://github.com/nesukun/AchievementComparer/issues/new">here</a>.
 
-* Why the app is ugly as hell?
+### Why the app is ugly as hell?
 Because that's subjective and I have the artistic sensibility of a drunk walrus.
 
-* Can I help?
+### Can I help?
 Sure! If you have fixes make a pull request. If you want to be more involved in the development I could add you as a collaborator.
 
-* This has saved my life! How can I repay you?
+### This has saved my life! How can I repay you?
 You know... there is this little message in the bottom-left corner of the app...
