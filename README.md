@@ -1,15 +1,15 @@
 # WoW Achievement Comparer
 ## Introduction
 
-This is a hobby project I'm working to cover for the loss an old feature of the WoW Armory which was lost after the deprecation of the old community sites. This feature allowed you to compare two characters against each other and see which achievements they had in common, who had achieved more, etc...
+This is a hobby project I'm working on to cover for an old feature of the WoW Armory which was lost after the deprecation of the old community sites. This feature allowed you to compare two characters against each other and see which achievements they had in common, who had acomplished more, etc...
 
 ## Features
 
 * Simple, responsive and intuitive UI based on Blizz's Armory.
 * All requests to the WoW API are cached.
-* Purely client-side: no need to register, quick load, no need to place ads, can use a copy from the local filesystem.
+* Purely client-side: no need to register, quick load, hostings costs, can use a copy from the local filesystem.
 * Supports all regions and localizations.
-* Achievements have WoWHead Tooltips and links.
+* Achievements have Wowhead Tooltips and links.
 
 ## Roadmap
 
