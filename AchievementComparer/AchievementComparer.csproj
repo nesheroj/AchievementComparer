@@ -14,6 +14,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.less" />
@@ -93,4 +95,5 @@
   <PropertyGroup>
     <PreBuildEvent>"$(SolutionDir)packages\dotless.1.3.1.0\tool\dotless.compiler.exe" -m "$(ProjectDir)app.less" "$(ProjectDir)app.css"</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
