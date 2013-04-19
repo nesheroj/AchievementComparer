@@ -7,7 +7,7 @@ This is a hobby project I'm working on to cover for an old feature of the WoW Ar
 
 * Simple, responsive and intuitive UI based on Blizz's Armory.
 * All requests to the WoW API are cached.
-* Purely client-side: no need to register, quick load, hostings costs, can use a copy from the local filesystem.
+* Purely client-side: no need to register, quick load, no hostings costs, can use a copy from the local filesystem.
 * Supports all regions and localizations.
 * Achievements have Wowhead Tooltips and links.
 
