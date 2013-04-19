@@ -13,12 +13,20 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 .color-c10 { color: #00ffba } /* monk */
 .color-c11 { color: #ff7c0a } /* druid */
 
-.icon-bounce {
+.icon-download-alt:hover {
   display: inline-block;
   -moz-animation: bounce 1s infinite linear;
   -o-animation: bounce 1s infinite linear;
   -webkit-animation: bounce 1s infinite linear;
   animation: bounce 1s infinite linear;
+}
+
+.icon-refresh:hover {
+  display: inline-block;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  -webkit-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
 }
 
 @-moz-keyframes bounce {
@@ -30,11 +38,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
   0% { -webkit-transform: scale(1,1); }
   50% { -webkit-transform: scale(1.5,1.5); }
   100% { -webkit-transform: scale(1,1); }
-}
-@-o-keyframes bounce {
-  0% { -o-transform: scale(1,1); }
-  50% { -o-transform: scale(1.5,1.5); }
-  100% { -o-transform: scale(1,1); }
 }
 @-ms-keyframes bounce {
   0% { -ms-transform: scale(1,1); }
@@ -55,6 +58,14 @@ body {
     background-color: black;
     margin: 50px 0 0 200px;
     text-align: center;
+}
+
+input[type="text"] {
+    border: 1px solid #ff7501;
+    box-shadow: 0 0 15px #ff7501;
+    background-color: black;
+    color: #ff7501;
+    padding: 3px;
 }
 
 footer {

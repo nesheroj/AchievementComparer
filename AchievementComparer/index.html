@@ -20,7 +20,7 @@
             </ul>
         </form>
     </div>
-    <div id="navigation">
+    <div id="navigation" data-ng-show="leftContender && rightContender">
         <ul data-ng-cloak="">
             <li class="category" data-ng-repeat="category in categories">
                 <a data-ng-class="{selected: location.path() == '/' + category.name}" href="#/{{category.name}}">{{category.name}}</a>
@@ -34,24 +34,39 @@
     </div>
      <div id="content">
         <div id="leftcontender" data-ng-cloak="">
-            <img data-ng-src="http:/{{region().host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
-            <p class="select"><a data-ng-click="selectRightContender()" title="select another character"><i class="icon-download-alt icon-bounce"></i></a></p>
-            <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh icon-spin"></i></a></p>
-            <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}-{{region}}</a></p>
-            <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}-{{region}}</p>
-            <p class="guild">{{leftContender.guild.name}}</p>
-            <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
+            <datalist id="recentCharacters">
+                <option value="{{character.name}}@{{character.realm}}" data-ng-repeat="character in recentCharacaters">
+            </datalist>
+            <div data-ng-hide="leftContender">
+                <img data-ng-src="{{region().host}}/wow/static/images/2d/avatar/1-1.jpg" class="avatar" />
+                <p class="title"><input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+            </div>
+            <div data-ng-show="leftContender">
+                <img data-ng-src="{{region().host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
+                <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+                <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}-{{region}}</a></p>
+                <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}-{{region}}</p>
+                <p class="guild">{{leftContender.guild.name}}</p>
+                <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
+            </div>
         </div>
         <div id="rightcontender" data-ng-cloak="">
-            <p class="select"><a data-ng-click="selectRightContender()" title="select another character"><i class="icon-download-alt icon-bounce"></i></a></p>
-            <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh icon-spin"></i></a></p>
-            <img data-ng-src="http://{{region().host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
-            <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
-            <p class="desc color-c{{rightContender.class}}">L<strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}-{{region}}</p>
-            <p class="guild">{{rightContender.guild.name}}</p>
-            <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
+            <div data-ng-hide="rightContender">
+                <img data-ng-src="{{region().host}}/wow/static/images/2d/avatar/1-0.jpg" class="avatar" />
+                <p class="title"><input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectRightContender(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+            </div>
+            <div data-ng-show="rightContender">
+                <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+                <img data-ng-src="{{region().host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
+                <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
+                <p class="desc color-c{{rightContender.class}}">L<strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}-{{region}}</p>
+                <p class="guild">{{rightContender.guild.name}}</p>
+                <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
+            </div>
         </div>
-        <div id="category" data-ng-cloak="" data-ng-show="category">
+        <div id="category" data-ng-cloak="" data-ng-show="category && leftContender && rightContender">
             <table>
                 <tr class="summary" data-ng-hide="category.total == 0">
                     <th class="left" style="background-image: linear-gradient(to left, #55B301 0%, #55B301 {{Math.round(category.leftContenderProgress*100/category.total)}}%, #000000 {{Math.round(category.leftContenderProgress*100/category.total)+3}}%, #000000 100%);">{{category.leftContenderProgress}}/{{category.total}} ({{Math.round(category.leftContenderProgress*100/category.total)}}%)</th>
