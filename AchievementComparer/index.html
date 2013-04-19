@@ -33,10 +33,10 @@
         </ul>
     </div>
      <div id="content">
+        <datalist id="recentCharacters">
+            <option value="{{character.name}}@{{character.realm}}" data-ng-repeat="character in recentCharacaters">
+        </datalist>
         <div id="leftcontender" data-ng-cloak="">
-            <datalist id="recentCharacters">
-                <option value="{{character.name}}@{{character.realm}}" data-ng-repeat="character in recentCharacaters">
-            </datalist>
             <div data-ng-hide="leftContender">
                 <img data-ng-src="{{region().host}}/wow/static/images/2d/avatar/1-1.jpg" class="avatar" />
                 <p class="title"><input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
