@@ -1,3 +1,6 @@
+var ISDEBUG = true;
+var LOG = (message: any, ...optionalParams: any[]) => { if (ISDEBUG) console.log(message, optionalParams) }
+
 interface Array {
     single(callbackfn: (value: _element, index: number, array: _element[]) => bool, thisArg?: any): _element;
 }

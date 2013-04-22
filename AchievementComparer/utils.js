@@ -1,3 +1,13 @@
+var ISDEBUG = true;
+var LOG = function (message) {
+    var optionalParams = [];
+    for (var _i = 0; _i < (arguments.length - 1); _i++) {
+        optionalParams[_i] = arguments[_i + 1];
+    }
+    if(ISDEBUG) {
+        console.log(message, optionalParams);
+    }
+};
 if(!Array.prototype.single) {
     Array.prototype.single = function (fun) {
         "use strict";

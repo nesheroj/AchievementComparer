@@ -3,41 +3,76 @@
 @maxbounce: 1.5,1.5;
 
 @-webkit-keyframes bounce {
-  0% { -webkit-transform: scale(@minbounce); }
-  50% { -webkit-transform: scale(@maxbounce); }
-  100% { -webkit-transform: scale(@minbounce); }
+    0% {
+        -webkit-transform: scale(@minbounce);
+    }
+
+    50% {
+        -webkit-transform: scale(@maxbounce);
+    }
+
+    100% {
+        -webkit-transform: scale(@minbounce);
+    }
 }
+
 @-moz-keyframes bounce {
-  0% { -moz-transform: scale(@minbounce); }
-  50% { -moz-transform: scale(@maxbounce); }
-  100% { -moz-transform: scale(@minbounce); }
+    0% {
+        -moz-transform: scale(@minbounce);
+    }
+
+    50% {
+        -moz-transform: scale(@maxbounce);
+    }
+
+    100% {
+        -moz-transform: scale(@minbounce);
+    }
 }
+
 @-ms-keyframes bounce {
-  0% { -ms-transform: scale(@minbounce); }
-  50% { -ms-transform: scale(@maxbounce); }
-  100% { -ms-transform: scale(@minbounce); }
+    0% {
+        -ms-transform: scale(@minbounce);
+    }
+
+    50% {
+        -ms-transform: scale(@maxbounce);
+    }
+
+    100% {
+        -ms-transform: scale(@minbounce);
+    }
 }
+
 @keyframes bounce {
-  0% { transform: scale(@minbounce); }
-  50% { transform: scale(@maxbounce); }
-  100% { transform: scale(@minbounce); }
+    0% {
+        transform: scale(@minbounce);
+    }
+
+    50% {
+        transform: scale(@maxbounce);
+    }
+
+    100% {
+        transform: scale(@minbounce);
+    }
 }
 
 // vendor prefix macros
 .animation(@animation) {
-  -webkit-animation: @animation;
-  -moz-animation: @animation;
-  -ms-animation: @animation;
-  -o-animation: @animation;
-  animation: @animation;
+    -webkit-animation: @animation;
+    -moz-animation: @animation;
+    -ms-animation: @animation;
+    -o-animation: @animation;
+    animation: @animation;
 }
 
 .transform(@transformation) {
-  -webkit-transform: @transformation;
-  -moz-transform: @transformation;
-  -ms-transform: @transformation;
-  -o-transform: @transformation;
-  transform: @transformation;
+    -webkit-transform: @transformation;
+    -moz-transform: @transformation;
+    -ms-transform: @transformation;
+    -o-transform: @transformation;
+    transform: @transformation;
 }
 
 // URL-fied images
