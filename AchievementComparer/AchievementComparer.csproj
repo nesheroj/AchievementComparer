@@ -27,6 +27,10 @@
     <Content Include="Definitions\common.less" />
     <Content Include="Definitions\reset.less" />
     <Content Include="packages.config" />
+    <Content Include="utils.js">
+      <DependentUpon>utils.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="utils.ts" />
     <TypeScriptCompile Include="Definitions\blizzard.d.ts" />
     <Content Include="Definitions\jquery.d.ts" />
     <Content Include="font\fontawesome-webfont.svg" />
@@ -41,7 +45,6 @@
     <Content Include="font\FontAwesome.otf" />
     <None Include="github.pubxml" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />

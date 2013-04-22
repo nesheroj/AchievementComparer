@@ -6,17 +6,34 @@
     <title>AchievementComparer</title>
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    <style>[data-ng-cloak=""] {display: none}</style>
+    <style>
+        [data-ng-cloak=""] {
+            display: none;
+        }
+    </style>
 </head>
 <body data-ng-controller="AchievementComparer.Controller">
     <div id="filter">
         <form>
             <ul data-ng-hide="true">
-                <li><label>Faction: <select name="faction" data-ng-model="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
-                <li><label>Account Wide: <select name="accountwide" data-ng-model="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
+                <li>
+                    <label>Faction:
+                        <select name="faction" data-ng-model="faction">
+                            <option value="0">All</option>
+                            <option value="1">Horde only</option>
+                            <option value="2">cross-faction</option>
+                        </select></label></li>
+                <li>
+                    <label>Account Wide:
+                        <select name="accountwide" data-ng-model="accountwide">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select></label></li>
                 <li>Hide achievements which... </li>
-                <li>... none has completed: <input type="checkbox" name="completion" value="none" /></li>
-                <li>... both have completed: <input type="checkbox" name="completion" value="both" checked /></li>
+                <li>... none has completed:
+                    <input type="checkbox" name="completion" value="none" /></li>
+                <li>... both have completed:
+                    <input type="checkbox" name="completion" value="both" checked /></li>
             </ul>
         </form>
     </div>
@@ -32,20 +49,21 @@
             </li>
         </ul>
     </div>
-     <div id="content">
+    <div id="content">
         <datalist id="recentCharacters">
             <option value="{{character.name}}@{{character.realm}}" data-ng-repeat="character in recentCharacaters">
         </datalist>
         <div id="leftcontender" data-ng-cloak="">
             <div data-ng-hide="leftContender">
-                <img data-ng-src="{{region().host}}/wow/static/images/2d/avatar/1-1.jpg" class="avatar" />
-                <p class="title"><input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+                <img data-ng-src="{{region.host}}/wow/static/images/2d/avatar/1-1.jpg" class="avatar" />
+                <p class="title">
+                    <input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
             </div>
             <div data-ng-show="leftContender">
-                <img data-ng-src="{{region().host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
+                <img data-ng-src="{{region.host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
                 <p class="select"><a data-ng-click="selectLeftContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
                 <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
-                <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}</a></p>
+                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}</a></p>
                 <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}</p>
                 <p class="guild">{{leftContender.guild.name}}</p>
                 <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
@@ -53,14 +71,15 @@
         </div>
         <div id="rightcontender" data-ng-cloak="">
             <div data-ng-hide="rightContender">
-                <img data-ng-src="{{region().host}}/wow/static/images/2d/avatar/1-0.jpg" class="avatar" />
-                <p class="title"><input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectRightContender(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+                <img data-ng-src="{{region.host}}/wow/static/images/2d/avatar/1-0.jpg" class="avatar" />
+                <p class="title">
+                    <input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectRightContender(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
             </div>
             <div data-ng-show="rightContender">
                 <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
                 <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
-                <img data-ng-src="{{region().host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
-                <p class="title"><a data-ng-href="http://{{region().host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
+                <img data-ng-src="{{region.host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
+                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
                 <p class="desc color-c{{rightContender.class}}">L<strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}</p>
                 <p class="guild">{{rightContender.guild.name}}</p>
                 <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
@@ -100,11 +119,12 @@
     <footer>
         <p>Made by Taikutsu @ Sanguino-EU</p>
         <p>You can buy me a drink or mail me gold if you found this useful :P</p>
-        <p>Source available on <a href="https://github.com/nesukun/AchievementComparer" target="_blank"><i class="icon-github"></i> Github</a></p>
+        <p>Source available on <a href="https://github.com/nesukun/AchievementComparer" target="_blank"><i class="icon-github"></i>Github</a></p>
     </footer>
     <script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/angular.min.js"></script>
+    <script src="utils.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
