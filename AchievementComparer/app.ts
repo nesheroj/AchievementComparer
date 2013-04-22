@@ -143,6 +143,7 @@ module AchievementComparer {
 
         achievementProgress: (contender: BattleNet.Character, achievementId: number) => string;
         criteriaProgress: (contender: BattleNet.Character, criteriaId: number) => string;
+        sortWeight: (achievement: BattleNet.Achievement) => number;
         classDesc: (classId: number) => string;
         raceDesc: (raceId: number) => string;
     }
@@ -239,6 +240,13 @@ module AchievementComparer {
                 if (contender.achievements.criteria.indexOf(criteriaId) == -1)
                     return "0";
                 return contender.achievements.criteriaQuantity[contender.achievements.criteria.indexOf(criteriaId)].toString();
+            };
+
+            $scope.sortWeight = (achievement: BattleNet.Achievement): number => {
+                var weight = 4;
+                if ($scope.leftContender.achievements.achievementsCompleted.indexOf(achievement.id) != -1) weight -= 2;
+                if ($scope.rightContender.achievements.achievementsCompleted.indexOf(achievement.id) != -1) weight -= 1;
+                return weight;
             };
 
             $scope.classDesc = (classId) => {

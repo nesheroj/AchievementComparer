@@ -204,7 +204,6 @@ strong {
     }
 
     tr.achievement {
-        background-color: #341a0f;
 
         img {
             float: left;
@@ -214,8 +213,23 @@ strong {
             border-radius: 3px;
         }
 
-        td {
+        >td {
             padding: 20px;
+            background-color: #341a0f;
+            border: 1px solid #7e3406;
+
+            &.leftcompleted {
+                background-image: linear-gradient(to left, #341a0f 0%, #341a0f 49%, #4a2715 51%, #4a2715 100%);
+            }
+
+            &.rightcompleted {
+                background-image: linear-gradient(to right, #341a0f 0%, #341a0f 49%, #4a2715 51%, #4a2715 100%);
+            }
+        
+            &.leftcompleted.rightcompleted {
+                background-image: none;
+                background-color: #4a2715;
+            }
         }
 
         p.points {
