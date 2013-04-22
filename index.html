@@ -3,12 +3,41 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>AchievementComparer {{title}}</title>
+    <title>AchievementComparer</title>
     <link rel="stylesheet" href="app.css">
-    <style>[data-ng-cloak=""] {display: none}</style>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <style>
+        [data-ng-cloak=""] {
+            display: none;
+        }
+    </style>
 </head>
 <body data-ng-controller="AchievementComparer.Controller">
-    <div id="navigation">
+    <div id="filter">
+        <form>
+            <ul data-ng-hide="true">
+                <li>
+                    <label>Faction:
+                        <select name="faction" data-ng-model="faction">
+                            <option value="0">All</option>
+                            <option value="1">Horde only</option>
+                            <option value="2">cross-faction</option>
+                        </select></label></li>
+                <li>
+                    <label>Account Wide:
+                        <select name="accountwide" data-ng-model="accountwide">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select></label></li>
+                <li>Hide achievements which... </li>
+                <li>... none has completed:
+                    <input type="checkbox" name="completion" value="none" /></li>
+                <li>... both have completed:
+                    <input type="checkbox" name="completion" value="both" checked /></li>
+            </ul>
+        </form>
+    </div>
+    <div id="navigation" data-ng-show="leftContender && rightContender">
         <ul data-ng-cloak="">
             <li class="category" data-ng-repeat="category in categories">
                 <a data-ng-class="{selected: location.path() == '/' + category.name}" href="#/{{category.name}}">{{category.name}}</a>
@@ -20,48 +49,60 @@
             </li>
         </ul>
     </div>
-    <div id="filter">
-        <form>
-            <ul data-ng-hide="true">
-                <li><label>Faction: <select name="faction" data-ng-model="faction"><option value="0">All</option><option value="1">Horde only</option><option value="2">cross-faction</option></select></label></li>
-                <li><label>Account Wide: <select name="accountwide" data-ng-model="accountwide"><option value="true">Yes</option><option value="false">No</option></select></label></li>
-                <li>Hide achievements which... </li>
-                <li>... none has completed: <input type="checkbox" name="completion" value="none" /></li>
-                <li>... both have completed: <input type="checkbox" name="completion" value="both" checked /></li>
-            </ul>
-        </form>
-    </div>
-     <div id="content">
+    <div id="content">
+        <datalist id="recentCharacters">
+            <option value="{{character.name}}@{{character.realm}}" data-ng-repeat="character in cachedCharacters" />
+        </datalist>
         <div id="leftcontender" data-ng-cloak="">
-            <img data-ng-src="http://eu.battle.net/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
-            <p class="title"><a data-ng-href="http://eu.battle.net/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/">{{leftContender.name}}@{{leftContender.realm}}</a></p>
-            <p class="desc color-c{{leftContender.class}}">L<strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}</p>
-            <p class="guild">{{leftContender.guild.name}}</p>
-            <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
+            <div data-ng-hide="leftContender">
+                <img data-ng-src="{{region.host}}/wow/static/images/2d/avatar/{{leftContenderDummyAvatar}}.jpg" class="avatar" />
+                <p class="title">
+                    <input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+            </div>
+            <div data-ng-show="leftContender">
+                <img data-ng-src="{{region.host}}/static-render/eu/{{leftContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{leftContender.race}}-{{leftContender.gender}}.jpg" class="avatar" />
+                <p class="select"><a data-ng-click="selectLeftContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}</a></p>
+                <p class="desc color-c{{leftContender.class}}"><strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}</p>
+                <p class="guild">{{leftContender.guild.name}}</p>
+                <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
+            </div>
         </div>
         <div id="rightcontender" data-ng-cloak="">
-            <img data-ng-src="http://eu.battle.net/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
-            <p class="title"><a data-ng-href="http://eu.battle.net/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/">{{rightContender.name}}@{{rightContender.realm}}</a></p>
-            <p class="desc color-c{{rightContender.class}}">L<strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}</p>
-            <p class="guild">{{rightContender.guild.name}}</p>
-            <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
+            <div data-ng-hide="rightContender">
+                <img data-ng-src="{{region.host}}/wow/static/images/2d/avatar/{{rightContenderDummyAvatar}}.jpg" class="avatar" />
+                <p class="title">
+                    <input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectRightContender(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+            </div>
+            <div data-ng-show="rightContender">
+                <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+                <img data-ng-src="{{region.host}}/static-render/eu/{{rightContender.thumbnail}}?alt=/wow/static/images/2d/avatar/{{rightContender.race}}-{{rightContender.gender}}.jpg" class="avatar" />
+                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
+                <p class="desc color-c{{rightContender.class}}"><strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}</p>
+                <p class="guild">{{rightContender.guild.name}}</p>
+                <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
+            </div>
         </div>
-        <div id="category" data-ng-cloak="" data-ng-show="category">
+        <div id="category" data-ng-cloak="" data-ng-show="category && leftContender && rightContender">
             <table>
-                <tr class="summary">
-                    <th class="left" style="background-image: linear-gradient(to right, black 0%, black {{Math.round(category.leftContenderProgress*100/category.total)-5}}%, #55B301 {{Math.round(category.leftContenderProgress*100/category.total)+5}}%, #55B301 100%);">{{category.leftContenderProgress}}/{{category.total}} ({{Math.round(category.leftContenderProgress*100/category.total)}}%)</th>
-                    <th class="right" style="background-image: linear-gradient(to left, black 0%, black {{Math.round(category.rightContenderProgress*100/category.total)-5}}%, #55B301 {{Math.round(category.rightContenderProgress*100/category.total)+5}}%, #55B301 100%);">{{category.rightContenderProgress}}/{{category.total}} ({{Math.round(category.rightContenderProgress*100/category.total)}}%)</th>
+                <tr class="summary" data-ng-hide="category.total == 0">
+                    <th class="left" style="background-image: linear-gradient(to left, #55B301 0%, #55B301 {{Math.round(category.leftContenderProgress*100/category.total)}}%, #000000 {{Math.round(category.leftContenderProgress*100/category.total)+3}}%, #000000 100%);">{{category.leftContenderProgress}}/{{category.total}} ({{Math.round(category.leftContenderProgress*100/category.total)}}%)</th>
+                    <th class="right" style="background-image: linear-gradient(to right, #55B301 0%, #55B301 {{Math.round(category.rightContenderProgress*100/category.total)}}%, #000000 {{Math.round(category.rightContenderProgress*100/category.total)+3}}%, #000000 100%);">{{category.rightContenderProgress}}/{{category.total}} ({{Math.round(category.rightContenderProgress*100/category.total)}}%)</th>
                 </tr>
                 <tr class="achievement" data-ng-repeat="achievement in category.achievements" data-ng-class="{account: achievement.accountWide}">
                     <td colspan="2">
-                        <img data-ng-src="http://media.blizzard.com/wow/icons/56/{{achievement.icon}}.jpg" />
-                        <p class="points">{{achievement.points}}</p>
-                        <p class="title"><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a></p>
-                        <p class="desc">{{achievement.description}}</p>
+                        <div>
+                            <img data-ng-src="http://media.blizzard.com/wow/icons/56/{{achievement.icon}}.jpg" />
+                            <p class="points" data-ng-hide="achievement.points == 0">{{achievement.points}}</p>
+                            <p class="title"><a href="http://www.wowhead.com/achievement={{achievement.id}}">{{achievement.title}}</a></p>
+                            <p class="desc">{{achievement.description}}</p>
+                        </div>
                         <table>
                             <tr>
                                 <th>{{achievementProgress(leftContender, achievement.id)}}</th>
-                                <th>Completed</th>
+                                <th></th>
                                 <th>{{achievementProgress(rightContender, achievement.id)}}</th>
                             </tr>
                             <tr data-ng-repeat="criteria in achievement.criteria" data-ng-hide="true">
@@ -75,9 +116,14 @@
             </table>
         </div>
     </div>
+    <footer>
+        <p>Made by Taikutsu @ Sanguino-EU</p>
+        <p>Source available on <a href="https://github.com/nesukun/AchievementComparer" target="_blank"><i class="icon-github"></i>Github</a></p>
+    </footer>
     <script type="text/javascript" src="http://static.wowhead.com/widgets/power.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/angular.min.js"></script>
+    <script src="utils.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
