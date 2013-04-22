@@ -160,6 +160,32 @@ module AchievementComparer {
         }
     }
 
+    export interface IEstorage {
+
+    }
+
+    export class Estorage implements IEstorage {
+
+        private database: IDBDatabase;
+
+        DB_NAME = "AchievementComparer";
+        DB_VERSION = 1;
+
+        constructor() {
+            var request = window.indexedDB.open(this.DB_NAME, this.DB_VERSION);
+            request.onerror = (event) => {
+                console.log(event.target);
+            };
+            request.onsuccess = (event) => {
+                this.database = request.result;
+            };
+            request.onupgradeneeded = (event) => {
+                var db = event.target.result;
+                var objectStore = db.createObjectStore("notes", { keyPath: "id", autoIncrement: true });
+            };
+        }
+    }
+
     export class Controller {
         public injection(): any[] {
             return [
