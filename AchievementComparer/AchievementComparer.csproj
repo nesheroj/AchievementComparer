@@ -25,10 +25,8 @@
       <DependentUpon>app.less</DependentUpon>
     </Content>
     <Content Include="Definitions\common.less" />
-    <Content Include="Definitions\jquery.indexeddb.d.ts" />
     <Content Include="Definitions\reset.less" />
     <Content Include="packages.config" />
-    <Content Include="Scripts\jquery.indexeddb.min.js" />
     <Content Include="utils.js">
       <DependentUpon>utils.ts</DependentUpon>
     </Content>
