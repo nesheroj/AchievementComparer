@@ -1,5 +1,5 @@
-// Blizz's data structures
-module BattleNet {
+declare module BattleNet {
+    // Blizz's data structures
     interface Character {
         lastModified: number;
         name: string;
@@ -38,7 +38,7 @@ module BattleNet {
 
     interface Achievement {
         id: number;
-        accountWide: bool;
+        accountWide: boolean;
         criteria: AchievementCriteria[];
         description: string;
         factionId: number;
@@ -104,9 +104,9 @@ module BattleNet {
         locale: string;
         name: string;
         population: string;
-        queue: bool;
+        queue: boolean;
         slug: string;
-        status: bool;
+        status: boolean;
         timezone: string;
         //"tol-barad": TolBaradInfo;
         type: string;

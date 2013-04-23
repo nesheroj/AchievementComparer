@@ -11,7 +11,7 @@ declare var angular: ng.IAngularStatic;
 ///////////////////////////////////////////////////////////////////////////////
 // ng module (angular.js)
 ///////////////////////////////////////////////////////////////////////////////
-module ng {
+declare module ng {
 
     // All service providers extend this interface
     interface IServiceProvider {
@@ -372,7 +372,10 @@ module ng {
     // RootElementService
     // see http://docs.angularjs.org/api/ng.$rootElement
     ///////////////////////////////////////////////////////////////////////////
-    interface IRootElementService extends JQuery {}
+    interface IRootElementService extends JQuery {
+        [x: string]: any;
+        [x: number]: HTMLElement;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // QService

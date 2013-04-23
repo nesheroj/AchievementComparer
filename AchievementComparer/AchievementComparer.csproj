@@ -26,6 +26,9 @@
     </Content>
     <Content Include="Definitions\common.less" />
     <Content Include="Definitions\reset.less" />
+    <Content Include="images\boubcompare.jpg" />
+    <Content Include="images\pepperidge.jpg" />
+    <Content Include="images\pepperidge1.jpg" />
     <Content Include="packages.config" />
     <Content Include="utils.js">
       <DependentUpon>utils.ts</DependentUpon>
