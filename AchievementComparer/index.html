@@ -89,7 +89,7 @@
             <label>Region / Locale: 
                 <select data-ng-model="locale">
                     <optgroup label="{{region.desc}}" data-ng-repeat="region in regions">
-                        <option value="{{locale}}" data-ng-repeat="locale in region.locales">{{localeDesc(locale)}}</option>
+                        <option value="{{locale}}" data-ng-repeat="locale in region.locales">{{locale.desc}}</option>
                     </optgroup>
                 </select>
             </label>

@@ -116,7 +116,6 @@ module AchievementComparer {
         lastRightContender: string;
         localeData: LocaleData;
         cachedCharacters: BattleNet.Character[];
-        regions: Region[];
 
         setLocale(locale: Locale);
         loadCharacter(contender: string, callback: (character: BattleNet.Character) => void, forceReload?: boolean);
@@ -128,7 +127,6 @@ module AchievementComparer {
         lastRightContender: string;
         localeData: LocaleData;
         cachedCharacters: BattleNet.Character[];
-        regions: Region[];
 
         public injection(): any[] {
             return [
@@ -137,7 +135,7 @@ module AchievementComparer {
         }
 
         constructor() {
-            this.setLocale((localStorage.getItem("data") !== null) ? JSON.parse(localStorage.getItem("data")).locale : this.regions[0].locales[0]);
+            this.setLocale((localStorage.getItem("data") !== null) ? JSON.parse(localStorage.getItem("data")).locale : Regions[0].locales[0]);
             this.lastLeftContender = localStorage.getItem("leftContender");
             this.lastRightContender = localStorage.getItem("rightContender");
             this.cachedCharacters = JSON.parse(localStorage.getItem("characters")) || [];
@@ -145,7 +143,7 @@ module AchievementComparer {
 
         setLocale(locale: Locale): void {
             this.currentLocale = locale;
-            var currentRegion = this.regions.single((region) => { return region.locales.indexOf(locale) > -1; } );
+            var currentRegion = Regions.single((region) => { return region.locales.indexOf(locale) > -1; } );
             this.localeData = JSON.parse(localStorage.getItem("data"));
             if (this.localeData === null || this.localeData.locale != locale) {
                 var achievements: BattleNet.AchievementCategory[];
@@ -185,7 +183,7 @@ module AchievementComparer {
 
         loadCharacter(contender: string, callback: (character: BattleNet.Character) => void , forceReload: boolean = false) {
             var character = this.cachedCharacters.single((character) => { return (character.realm + "/" + character.name) === contender });
-            var currentRegion = this.regions.single((region) => { return region.locales.indexOf(this.currentLocale) > -1; });
+            var currentRegion = Regions.single((region) => { return region.locales.indexOf(this.currentLocale) > -1; });
             if (forceReload || character === null)
                 $.getJSON(currentRegion.host + "/api/wow/character/" + contender + "?locale=" + this.currentLocale + "&fields=achievements,guild&jsonp=?").done(callback);
             else callback(character);
