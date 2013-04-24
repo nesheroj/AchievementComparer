@@ -26,7 +26,7 @@ This is a hobby project I'm working on to cover for an old feature of the WoW Ar
 ## FAQ
 
 ### Will you ever charge or display ads?
-Never. I do this just for fun (Really, developing is lots of fun, you should try someday).
+Never. I do this just for fun..
 
 ### Why can't I use this in older browsers?
 Because IE<10 and old browsers are insecure, give me cancer and make my battle pets cry. Remember I do this for fun.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/MsBuild/2003">
+	<ItemGroup>
+		<AvailableItemName Include="DotlessCompile" />   
+	</ItemGroup>
+	
+    <Target Name="DotlessCompile">
+		<Message Text="Compiling Less files" />
+		<Message Text="Executing dotless.compiler.exe $(TypeScriptBuildConfigurations) @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" />
+        <Exec Command="$(SolutionDir)\packages\dotless.1.3.1.0\tool\dotless.compiler.exe $(DotlessCompilerOptions) @(DotlessCompile ->'&quot;%(fullpath)&quot;', ' ')" />
+    </Target>
+</Project>
