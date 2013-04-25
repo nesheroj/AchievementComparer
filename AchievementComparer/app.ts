@@ -180,7 +180,7 @@ module AchievementComparer {
 
             $scope.currentLocale = Storage.localeData.locale;
             $scope.regions = Regions;
-            $scope.region = $scope.regions.single((region) => { return region.locales.indexOf($scope.locale) > -1; } );
+            $scope.region = $scope.regions.single((region) => { return region.locales.indexOf($scope.currentLocale) > -1; } );
             $scope.leftContender = new Contender(Storage.lastLeftContender);
             $scope.rightContender = new Contender(Storage.lastRightContender);
 
