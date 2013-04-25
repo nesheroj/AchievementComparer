@@ -9,9 +9,9 @@ var LOG = function (message) {
     }
 };
 if (!Array.prototype.single) {
-    Array.prototype.single = function (fun) {
+    Array.prototype.single = function (callbackfn) {
         "use strict";
-        var res = this.filter(fun);
+        var res = this.filter(callbackfn);
         if (res.length == 0) {
             return null;
         }
@@ -23,9 +23,12 @@ if (!Array.prototype.single) {
 }
 if (!String.prototype.format) {
     String.prototype.format = function (args) {
+        "use strict";
         var template = this;
         for(var i = 0; i < args.length; i++) {
-            template.replace("{" + i + "}", args[i]);
+            if (template.indexOf("{" + i + "}") > -1) {
+                template.replace("{" + i + "}", args[i]);
+            }
         }
         return this;
     };

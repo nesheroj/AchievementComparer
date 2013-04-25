@@ -1,23 +1,12 @@
 /// <reference path='Definitions/angular.d.ts' />
 /// <reference path='Definitions/blizzard.d.ts' />
 /// <reference path='Definitions/ga.d.ts' />
+/// <reference path='Definitions/app.d.ts' />
 /// <reference path='utils.ts' />
 
 module AchievementComparer {
     'use strict';
-
-    export interface Region {
-        code: string;
-        desc: string;
-        host: string;
-        locales: Locale[];
-    }
-
-    export interface Locale {
-        code: string;
-        desc: string;
-    }
-
+    
     var Regions: Region[] = [
         {
             code: "US",
@@ -25,9 +14,9 @@ module AchievementComparer {
             host: "http://us.battle.net",
             locales:
             [
-                { code: "en_US", desc: "English (US)" },
-                { code: "es_MX", desc: "Spanish (Mexico)" },
-                { code: "pt_BR", desc: "Brazilian Portuguese" }
+                "en_US", // "English (US)",
+                "es_MX", // "Spanish (Mexico)",
+                "pt_BR" // "Brazilian Portuguese"
             ]
         },
         {
@@ -36,93 +25,74 @@ module AchievementComparer {
             host: "http://eu.battle.net",
             locales:
             [
-                { code: "en_GB", desc: "English (UK)" },
-                { code: "es_ES", desc: "Spanish (Spain)" },
-                { code: "fr_FR", desc: "French" },
-                { code: "ru_RU", desc: "Russian" },
-                { code: "de_DE", desc: "German" },
-                { code: "pt_PT", desc: "Portuguese" },
-                { code: "it_IT", desc: "Italian" }
+                "en_GB", // "English (UK)",
+                "es_ES", // "Spanish (Spain)",
+                "fr_FR", // "French",
+                "ru_RU", // "Russian",
+                "de_DE", // "German",
+                "pt_PT", // "Portuguese",
+                "it_IT", // "Italian"
             ]
         },
         {
             code: "KR",
             desc: "Korea",
             host: "http://kr.battle.net",
-            locales: [{ code: "ko_KR", desc: "Korean" }]
+            locales: ["ko_KR"] // "Korean"
         },
         {
             code: "TW",
             desc: "Taiwan",
             host: "http://tw.battle.net",
-            locales: [{ code: "zh_TW", desc: "Chinese, Traditional" }]
+            locales: ["zh_TW"] //"Chinese, Traditional"
         },
         {
             code: "CN",
             desc: "China",
             host: "http://www.battlenet.com.cn",
-            locales: [{ code: "zh_CN", desc: "Chinese, Simplified" }]
+            locales: ["zh_CN"] //"Chinese, Simplified"
         }];
-
-    export interface Category extends BattleNet.AchievementCategory {
-        total: number;
-        leftContenderProgress: number;
-        rightContenderProgress: number;
-    }
     
     export class Contender {
         Avatar: string;
         Character: BattleNet.Character;
-        Region: Region;
 
         constructor(address?: string) {
             this.Avatar = this.formatAvatar();
-            if (address) {
-                Storage.loadCharacter(name.split("@").reverse().join("/"), (character: BattleNet.Character) => {
-                    this.Character = character;
-                    this.Avatar = this.formatAvatar();
-                } );
-            }
+            if (address) this.loadCharacter(address);
         }
 
         private formatAvatar(): string {
             if (this.Character) return "{0}/static-render/eu/{1}?alt=/wow/static/images/2d/avatar/{2}-{3}.jpg".format(Regions[0].host, this.Character.thumbnail, this.Character.race, this.Character.gender);
             else return "{0}/wow/static/images/2d/avatar/{1}-{2}.jpg".format(Regions[0].host, Math.floor((Math.random() * 11) + 1), Math.floor((Math.random() * 2)));
         }
+        
+        loadCharacter(address: string) {
+            Storage.loadCharacter(name.split("@").reverse().join("/"), (character: BattleNet.Character) => {
+                this.Character = character;
+                this.Avatar = this.formatAvatar();
+            });
+        }
 
-        unLoad() {
+        unLoadCharacter() {
             this.Character = null;
             this.Avatar = this.formatAvatar();
         }
 
-        reloadFromArmory() {
+        reloadCharacter() {
             if (this.Character) {
-                Storage.loadCharacter(this.Character.realm + "/" + this.Character.name, (character: BattleNet.Character) => { this.Character = character; } , true);
-                this.Avatar = this.formatAvatar();
+                Storage.loadCharacter(this.Character.realm + "/" + this.Character.name, (character: BattleNet.Character) => {
+                    this.Character = character;
+                    this.Avatar = this.formatAvatar();
+                } , true);
             }
         }
     }
 
-    export interface LocaleData {
-        locale: Locale;
-        achievements: BattleNet.AchievementCategory[];
-        classes: BattleNet.CharacterClass[];
-        races: BattleNet.CharacterRace[];
-        realms: BattleNet.RealmStatus[];
-    }
-
-    export interface IStorage {
-        lastLeftContender: string;
-        lastRightContender: string;
-        localeData: LocaleData;
-        cachedCharacters: BattleNet.Character[];
-
-        setLocale(locale: Locale);
-        loadCharacter(contender: string, callback: (character: BattleNet.Character) => void, forceReload?: boolean);
-    }
 
     export class Storage implements IStorage {
-        currentLocale: Locale;
+        currentLocale: string;
+        currentRegion: Region;
         lastLeftContender: string;
         lastRightContender: string;
         localeData: LocaleData;
@@ -141,9 +111,9 @@ module AchievementComparer {
             this.cachedCharacters = JSON.parse(localStorage.getItem("characters")) || [];
         }
 
-        setLocale(locale: Locale): void {
+        setLocale(locale: string): void {
             this.currentLocale = locale;
-            var currentRegion = Regions.single((region) => { return region.locales.indexOf(locale) > -1; } );
+            this.currentRegion = Regions.single((region) => { return region.locales.indexOf(locale) > -1; } );
             this.localeData = JSON.parse(localStorage.getItem("data"));
             if (this.localeData === null || this.localeData.locale != locale) {
                 var achievements: BattleNet.AchievementCategory[];
@@ -151,28 +121,28 @@ module AchievementComparer {
                 var races: BattleNet.CharacterRace[];
                 var realms: BattleNet.RealmStatus[];
 
-                $.getJSON(currentRegion.host + "/api/wow/data/character/achievements?locale=" + locale + "&jsonp=?").done((json: BattleNet.Achievements) => {
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/achievements?locale=" + locale + "&jsonp=?").done((json: BattleNet.Achievements) => {
                     achievements = json.achievements;
                     if ([classes, races, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(currentRegion.host + "/api/wow/data/character/classes?locale=" + locale + "&jsonp=?").done((json: BattleNet.Classes) => {
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/classes?locale=" + locale + "&jsonp=?").done((json: BattleNet.Classes) => {
                     classes = json.classes;
                     if ([achievements, races, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(currentRegion.host + "/api/wow/data/character/races?locale=" + locale + "&jsonp=?").done((json: BattleNet.Races) => {
+                $.getJSON(this.currentRegion.host + "/api/wow/data/character/races?locale=" + locale + "&jsonp=?").done((json: BattleNet.Races) => {
                     races = json.races;
                     if ([achievements, classes, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(currentRegion.host + "/api/wow/realm/status?locale=" + locale + "&jsonp=?").done((json: BattleNet.Realms) => {
+                $.getJSON(this.currentRegion.host + "/api/wow/realm/status?locale=" + locale + "&jsonp=?").done((json: BattleNet.Realms) => {
                     realms = json.realms;
                     if ([achievements, classes, races].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));;
@@ -183,32 +153,10 @@ module AchievementComparer {
 
         loadCharacter(contender: string, callback: (character: BattleNet.Character) => void , forceReload: boolean = false) {
             var character = this.cachedCharacters.single((character) => { return (character.realm + "/" + character.name) === contender });
-            var currentRegion = Regions.single((region) => { return region.locales.indexOf(this.currentLocale) > -1; });
             if (forceReload || character === null)
-                $.getJSON(currentRegion.host + "/api/wow/character/" + contender + "?locale=" + this.currentLocale + "&fields=achievements,guild&jsonp=?").done(callback);
+                $.getJSON(this.currentRegion.host + "/api/wow/character/" + contender + "?locale=" + this.currentLocale + "&fields=achievements,guild&jsonp=?").done(callback);
             else callback(character);
         }
-    }
-
-    export interface IScope extends ng.IScope {
-        Math: Math;
-
-        location: ng.ILocationService;
-
-        locale: Locale;
-        region: Region;
-        regions: Region[];
-        categories: BattleNet.AchievementCategory[];
-        cachedCharacters: BattleNet.Character[];
-        category: Category;
-        leftContender: Contender;
-        rightContender: Contender;
-
-        achievementProgress: (contender: BattleNet.Character, achievementId: number) => string;
-        criteriaProgress: (contender: BattleNet.Character, criteriaId: number) => string;
-        sortWeight: (achievement: BattleNet.Achievement) => number;
-        classDesc: (classId: number) => string;
-        raceDesc: (raceId: number) => string;
     }
 
     export class Controller {
@@ -230,11 +178,13 @@ module AchievementComparer {
            ) {
             $scope.Math = Math;
 
-            $scope.locale = Storage.localeData.locale;
+            $scope.currentLocale = Storage.localeData.locale;
             $scope.regions = Regions;
             $scope.region = $scope.regions.single((region) => { return region.locales.indexOf($scope.locale) > -1; } );
+            $scope.leftContender = new Contender(Storage.lastLeftContender);
+            $scope.rightContender = new Contender(Storage.lastRightContender);
 
-            $scope.$watch('locale', () => { Storage.setLocale($scope.locale); $scope.region = $scope.regions.single((region) => { return region.locales.indexOf($scope.locale) > -1; }); });
+            $scope.$watch('currentLocale', () => { Storage.setLocale($scope.currentLocale); $scope.region = $scope.regions.single((region) => { return region.locales.indexOf($scope.currentLocale) > -1; }); });
 
             $scope.$watch((scope) => { return Storage.cachedCharacters; }, () => { $scope.cachedCharacters = Storage.cachedCharacters; });
 
@@ -273,7 +223,7 @@ module AchievementComparer {
         }
 
         onPath(path: string) {
-            if (!(this.$scope.leftContender && this.$scope.leftContender)) return;
+            if (!(this.$scope.leftContender.Character && this.$scope.leftContender.Character)) return;
             if (path === "") path = "/" + this.$scope.categories[0].name;
             var categoryPath = path.split("/");
             if (categoryPath.length == 2) {

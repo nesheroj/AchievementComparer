@@ -6,6 +6,8 @@
     <title>AchievementComparer</title>
     <meta name="description" content="">
     <link rel="icon" href="images/ability_warrior_innerrage.jpg">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/3.0.2/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/app.css">
     <style>
         [data-ng-cloak=""] {
@@ -58,39 +60,39 @@
             <div data-ng-hide="leftContender && !locale">
                 <img data-ng-src="{{leftContenderAvatar}}" class="avatar" />
                 <p class="title">
-                    <input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectLeftContender(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+                    <input type="text" data-ng-model="leftContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="leftContender.loadCharacter(leftContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
             </div>
             <div data-ng-show="leftContender">
                 <img data-ng-src="{{leftContenderAvatar}}" class="avatar" />
-                <p class="select"><a data-ng-click="selectLeftContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
-                <p class="reload"><a data-ng-click="reloadLeftContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
-                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{leftContender.realm}}/{{leftContender.name}}/" target="_blank">{{leftContender.name}} @ {{leftContender.realm}}</a></p>
-                <p class="desc color-c{{leftContender.class}}"><strong>{{leftContender.level}}</strong>&nbsp;{{raceDesc(leftContender.race)}}&nbsp;{{classDesc(leftContender.class)}}</p>
-                <p class="guild">{{leftContender.guild.name}}</p>
-                <p class="points"><span>{{leftContender.achievementPoints}}</span></p>
+                <p class="select"><a data-ng-click="leftContender.unloadCharacter()" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="leftContender.reloadCharacter()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+                <p class="title"><a href="http://{{region.host}}/wow/en/character/{{leftContender.character.realm}}/{{leftContender.character.name}}/" target="_blank">{{leftContender.character.name}} @ {{leftContender.character.realm}}</a></p>
+                <p class="desc color-c{{leftContender.character.class}}"><strong>{{leftContender.character.level}}</strong>&nbsp;{{raceDesc(leftContender.character.race)}}&nbsp;{{classDesc(leftContender.character.class)}}</p>
+                <p class="guild">{{leftContender.character.guild.name}}</p>
+                <p class="points"><span>{{leftContender.character.achievementPoints}}</span></p>
             </div>
         </div>
         <div id="rightcontender" data-ng-cloak="">
             <div data-ng-hide="rightContender">
                 <img data-ng-src="{{rightContenderAvatar}}" class="avatar" />
                 <p class="title">
-                    <input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="selectRightContender(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
+                    <input type="text" data-ng-model="rightContenderName" placeholder="Character@Realm" list="recentCharacters" data-ng-pattern="/[A-Za-z]+@[A-Za-z]+/" />&nbsp;<a data-ng-click="rightContender.loadCharacter(rightContenderName)" title="select character"><i class="icon-download-alt"></i></a></p>
             </div>
-            <div data-ng-show="rightContender && !locale">
-                <p class="select"><a data-ng-click="selectRightContender('')" title="select another character"><i class="icon-download-alt"></i></a></p>
-                <p class="reload"><a data-ng-click="reloadRightContender()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
+            <div data-ng-show="rightContender">
+                <p class="select"><a data-ng-click="rightContender.unloadCharacter()" title="select another character"><i class="icon-download-alt"></i></a></p>
+                <p class="reload"><a data-ng-click="rightContender.reloadCharacter()" title="reload this character from armory"><i class="icon-refresh"></i></a></p>
                 <img data-ng-src="{{rightContenderAvatar}}" class="avatar" />
-                <p class="title"><a data-ng-href="http://{{region.host}}/wow/en/character/{{rightContender.realm}}/{{rightContender.name}}/" target="_blank">{{rightContender.name}} @ {{rightContender.realm}}</a></p>
-                <p class="desc color-c{{rightContender.class}}"><strong>{{rightContender.level}}</strong>&nbsp;{{raceDesc(rightContender.race)}}&nbsp;{{classDesc(rightContender.class)}}</p>
-                <p class="guild">{{rightContender.guild.name}}</p>
-                <p class="points"><span>{{rightContender.achievementPoints}}</span></p>
+                <p class="title"><a href="http://{{region.host}}/wow/en/character/{{rightContender.character.realm}}/{{rightContender.character.name}}/" target="_blank">{{rightContender.character.name}} @ {{rightContender.character.realm}}</a></p>
+                <p class="desc color-c{{rightContender.character.class}}"><strong>{{rightContender.character.level}}</strong>&nbsp;{{raceDesc(rightContender.character.race)}}&nbsp;{{classDesc(rightContender.character.class)}}</p>
+                <p class="guild">{{rightContender.character.guild.name}}</p>
+                <p class="points"><span>{{rightContender.character.achievementPoints}}</span></p>
             </div>
         </div>
         <div id="setup" data-ng-cloak="" data-ng-hide="category && leftContender && rightContender">
             <label>Region / Locale: 
                 <select data-ng-model="locale">
                     <optgroup label="{{region.desc}}" data-ng-repeat="region in regions">
-                        <option value="{{locale}}" data-ng-repeat="locale in region.locales">{{locale.desc}}</option>
+                        <option value="{{locale}}" data-ng-repeat="locale in region.locales">{{locale}}</option>
                     </optgroup>
                 </select>
             </label>
@@ -134,7 +136,13 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
     <script src="utils.js"></script>
     <script src="app.js"></script>
-    <script src="http://static.wowhead.com/widgets/power.js"></script>
+    <script>
+        (function (d, t) {
+            var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            g.src = 'http://static.wowhead.com/widgets/power.js';
+            s.parentNode.insertBefore(g, s)
+        }(document, 'script'));
+    </script>
     <script>
         var _gaq = [['_setAccount', 'UA-40392645-1'], ['_trackPageview']];
         (function (d, t) {

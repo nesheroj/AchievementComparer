@@ -19,8 +19,6 @@
   </PropertyGroup>
   <ItemGroup>
     <DotlessCompile Include="css\app.less" />
-    <None Include="css\font-awesome.less" />
-    <None Include="css\normalize.less" />
     <None Include="Definitions\angular.d.ts" />
     <Content Include="css\app.css">
       <DependentUpon>app.less</DependentUpon>
@@ -28,6 +26,7 @@
     <None Include="css\common.less" />
     <None Include="Definitions\ga.d.ts" />
     <None Include="Definitions\jquery.d.ts" />
+    <Content Include="Definitions\app.d.ts" />
     <Content Include="images\ability_warrior_innerrage.jpg" />
     <Content Include="images\boubcompare.jpg" />
     <Content Include="images\pepperidge.jpg" />
@@ -38,16 +37,13 @@
     </Content>
     <TypeScriptCompile Include="utils.ts" />
     <None Include="Definitions\blizzard.d.ts" />
-    <Content Include="font\fontawesome-webfont.svg" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>
     </Content>
-    <Content Include="font\fontawesome-webfont.eot" />
-    <Content Include="font\fontawesome-webfont.ttf" />
-    <Content Include="font\fontawesome-webfont.woff" />
-    <Content Include="font\FontAwesome.otf" />
-    <None Include="github.pubxml" />
+    <None Include="github.pubxml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
