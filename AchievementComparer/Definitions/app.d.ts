@@ -34,7 +34,6 @@ declare module AchievementComparer {
         cachedCharacters: BattleNet.Character[];
 
         setLocale(locale: string);
-        loadCharacter(contender: string, callback: (character: BattleNet.Character) => void , forceReload?: boolean);
     }
 
     export interface IScope extends ng.IScope {

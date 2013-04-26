@@ -52,6 +52,8 @@ module AchievementComparer {
             host: "http://www.battlenet.com.cn",
             locales: ["zh_CN"] //"Chinese, Simplified"
         }];
+
+    var CachedCharacters: BattleNet.Character[];
     
     export class Contender {
         Avatar: string;
@@ -59,19 +61,21 @@ module AchievementComparer {
 
         constructor(address?: string) {
             this.Avatar = this.formatAvatar();
-            if (address) this.loadCharacter(address);
+            if (address) this.loadCharacter(address, false);
         }
 
         private formatAvatar(): string {
-            if (this.Character) return "{0}/static-render/eu/{1}?alt=/wow/static/images/2d/avatar/{2}-{3}.jpg".format(Regions[0].host, this.Character.thumbnail, this.Character.race, this.Character.gender);
-            else return "{0}/wow/static/images/2d/avatar/{1}-{2}.jpg".format(Regions[0].host, Math.floor((Math.random() * 11) + 1), Math.floor((Math.random() * 2)));
+            if (this.Character) return "{0}/static-render/eu/{1}?alt=/wow/static/images/2d/avatar/{2}-{3}.jpg".format(Regions[1].host, this.Character.thumbnail, this.Character.race, this.Character.gender);
+            else return "{0}/wow/static/images/2d/avatar/{1}-{2}.jpg".format(Regions[1].host, Math.floor((Math.random() * 11) + 1), Math.floor((Math.random() * 2)));
         }
-        
-        loadCharacter(address: string) {
-            Storage.loadCharacter(name.split("@").reverse().join("/"), (character: BattleNet.Character) => {
-                this.Character = character;
-                this.Avatar = this.formatAvatar();
-            });
+
+        private loadCharacter(address: string, forceReload?: boolean) {
+            if (this.Character === null || "{0}@{1}".format(this.Character.name, this.Character.realm) !== address) {
+                var callback = (character: BattleNet.Character) => { this.Character = character; this.Avatar = this.formatAvatar(); };
+                if (forceReload)
+                    $.getJSON("{0}/api/wow/character/{1}?locale={2}&fields=achievements,guild&jsonp=?".format(Regions[1].host, address, Regions[0].locales[0])).done(callback);
+                else callback(CachedCharacters.single((character) => { return (address) === address.split("@").reverse().join("/") } ));
+            }
         }
 
         unLoadCharacter() {
@@ -81,10 +85,10 @@ module AchievementComparer {
 
         reloadCharacter() {
             if (this.Character) {
-                Storage.loadCharacter(this.Character.realm + "/" + this.Character.name, (character: BattleNet.Character) => {
+                $.getJSON("{0}/api/wow/character/{1}/{2}?locale={3}&fields=achievements,guild&jsonp=?".format(Regions[1].host, this.Character.realm, this.Character.name, Regions[0].locales[0])).done((character: BattleNet.Character) => {
                     this.Character = character;
                     this.Avatar = this.formatAvatar();
-                } , true);
+                });
             }
         }
     }
@@ -105,15 +109,12 @@ module AchievementComparer {
         }
 
         constructor() {
-            this.setLocale((localStorage.getItem("data") !== null) ? JSON.parse(localStorage.getItem("data")).locale : Regions[0].locales[0]);
+            this.setLocale(Regions[1].locales[0]);
             this.lastLeftContender = localStorage.getItem("leftContender");
             this.lastRightContender = localStorage.getItem("rightContender");
-            this.cachedCharacters = JSON.parse(localStorage.getItem("characters")) || [];
         }
 
         setLocale(locale: string): void {
-            this.currentLocale = locale;
-            this.currentRegion = Regions.single((region) => { return region.locales.indexOf(locale) > -1; } );
             this.localeData = JSON.parse(localStorage.getItem("data"));
             if (this.localeData === null || this.localeData.locale != locale) {
                 var achievements: BattleNet.AchievementCategory[];
@@ -121,41 +122,34 @@ module AchievementComparer {
                 var races: BattleNet.CharacterRace[];
                 var realms: BattleNet.RealmStatus[];
 
-                $.getJSON(this.currentRegion.host + "/api/wow/data/character/achievements?locale=" + locale + "&jsonp=?").done((json: BattleNet.Achievements) => {
+                $.getJSON("{0}/api/wow/data/character/achievemetns?locale={1}&jsonp=?".format(Regions[1].host, locale)).done((json: BattleNet.Achievements) => {
                     achievements = json.achievements;
                     if ([classes, races, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(this.currentRegion.host + "/api/wow/data/character/classes?locale=" + locale + "&jsonp=?").done((json: BattleNet.Classes) => {
+                $.getJSON("{0}/api/wow/data/character/classes?locale={1}&jsonp=?".format(Regions[1].host, locale)).done((json: BattleNet.Classes) => {
                     classes = json.classes;
                     if ([achievements, races, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(this.currentRegion.host + "/api/wow/data/character/races?locale=" + locale + "&jsonp=?").done((json: BattleNet.Races) => {
+                $.getJSON("{0}/api/wow/data/character/races?locale={1}&jsonp=?".format(Regions[1].host, locale)).done((json: BattleNet.Races) => {
                     races = json.races;
                     if ([achievements, classes, realms].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));
                     }
                 });
 
-                $.getJSON(this.currentRegion.host + "/api/wow/realm/status?locale=" + locale + "&jsonp=?").done((json: BattleNet.Realms) => {
+                $.getJSON("{0}/api/wow/realm/status?locale={1}&jsonp=?".format(Regions[1].host, locale)).done((json: BattleNet.Realms) => {
                     realms = json.realms;
                     if ([achievements, classes, races].every((current) => { return current != null })) {
                         localStorage.setItem("data", JSON.stringify(this.localeData = { locale: locale, achievements: achievements, classes: classes, races: races, realms: realms }));;
                     }
                 });
             }
-        }
-
-        loadCharacter(contender: string, callback: (character: BattleNet.Character) => void , forceReload: boolean = false) {
-            var character = this.cachedCharacters.single((character) => { return (character.realm + "/" + character.name) === contender });
-            if (forceReload || character === null)
-                $.getJSON(this.currentRegion.host + "/api/wow/character/" + contender + "?locale=" + this.currentLocale + "&fields=achievements,guild&jsonp=?").done(callback);
-            else callback(character);
         }
     }
 

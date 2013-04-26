@@ -1,3 +1,4 @@
+"use strict";
 var ISDEBUG = true;
 var LOG = (message: any, ...optionalParams: any[]) => { if (ISDEBUG) console.log(message, optionalParams) }
 
@@ -7,7 +8,6 @@ interface Array<T> {
 
 if (!Array.prototype.single) {
     Array.prototype.single = function (fun) {
-        "use strict";
         var res = this.filter(fun);
 
         if (res.length == 0)
@@ -25,11 +25,11 @@ interface String {
 }
 
 if (!String.prototype.format) {
-    String.prototype.format = function (args) {
+    String.prototype.format = function (...args: any[]) {
         var template = this;
         for (var i = 0; i < args.length; i++) {
-            template.replace("{" + i + "}", args[i]);
+            template = template.replace("{" + i + "}", args[i]);
         }
-        return this;
+        return template;
     };
 }
