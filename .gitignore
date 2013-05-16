@@ -164,6 +164,7 @@ pip-log.txt
 
 *.pubxml
 *.map
+.c9revisions/
 packages/
 AchievementComparer/app.js
 AchievementComparer/utils.js
