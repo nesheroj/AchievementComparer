@@ -1,4 +1,7 @@
 # WoW Achievement Comparer
+
+WARNING: This project is on hiatus until I find time to spend on it :(
+
 ## Introduction
 
 This is a hobby project I'm working on to cover for an old feature of the WoW Armory which was lost after the deprecation of the old community sites. This feature allowed you to compare two characters against each other and see which achievements they had in common, who had acomplished more, etc...
